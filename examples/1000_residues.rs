@@ -1,13 +1,11 @@
+use colored::Colorize;
+
 use scalarff::alt_bn128::Bn128FieldElement;
 use scalarff::curve_25519::Curve25519FieldElement;
 use scalarff::foi::FoiFieldElement;
-use scalarff::quadratic_residues_at;
 use scalarff::timing::stat_exec;
 use scalarff::timing::summary_exec;
-use scalarff::BigUint;
 use scalarff::FieldElement;
-
-use colored::Colorize;
 
 fn main() {
     // calculate the next {count} square roots in a field
@@ -18,79 +16,72 @@ fn main() {
     stat_exec(
         &format!("{count} residues in {}", Bn128FieldElement::name_str()),
         &mut || {
-            type F = Bn128FieldElement;
-            let field_name = F::name_str();
-            let residues = print_residues::<F>(start_at, count);
-            for (element, low_root, high_root) in &residues {
-                println!(
-                    "    {}_{} = {} * {}",
-                    element.to_string().red().bold(),
-                    field_name.to_string().green().bold(),
-                    low_root.to_string(),
-                    high_root
-                );
-            }
+            print_residues::<Bn128FieldElement>(start_at, count);
         },
     );
 
     stat_exec(
         &format!("{count} residues in {}", Curve25519FieldElement::name_str()),
         &mut || {
-            type F = Curve25519FieldElement;
-            let field_name = F::name_str();
-            let residues = print_residues::<F>(start_at, count);
-            for (element, low_root, high_root) in &residues {
-                println!(
-                    "    {}_{} = {} * {}",
-                    element.to_string().red().bold(),
-                    field_name.to_string().green().bold(),
-                    low_root.to_string(),
-                    high_root
-                );
-            }
+            print_residues::<Curve25519FieldElement>(start_at, count);
         },
     );
 
     stat_exec(
         &format!("{count} residues in {}", FoiFieldElement::name_str()),
-        &mut || {
-            type F = Curve25519FieldElement;
-            let field_name = F::name_str();
-            let residues = print_residues::<F>(start_at, count);
-            for (element, low_root, high_root) in &residues {
-                println!(
-                    "    {}_{} = {} * {}",
-                    element.to_string().red().bold(),
-                    field_name.to_string().green().bold(),
-                    low_root.to_string(),
-                    high_root
-                );
-            }
-        },
+        &mut || print_residues::<FoiFieldElement>(start_at, count),
     );
 
     summary_exec();
 }
 
-fn print_residues<T: FieldElement>(
-    start_at: usize,
-    count: usize,
-) -> Vec<(BigUint, BigUint, BigUint)> {
+/// Find the next `count` positive quadratic residues starting from element `start_at`
+/// IDEA: find the _nearest_ quadratic residues. e.g. search in both directions: positive and negative
+fn print_residues<T: FieldElement>(start_at: usize, count: usize) {
+    let field_name = T::name_str();
     let message = format!(
         "finding the next {count} residues in field {}: starting at {start_at}",
-        T::name_str()
+        field_name
     )
     .blue()
     .bold();
     println!("{message}",);
+
     // (element, low_root, high_root)
-    let mut out = vec![];
-    let residues = quadratic_residues_at::<T>(start_at.into(), count.into());
-    out.append(
-        &mut residues
-            .iter()
-            .map(|v| (v.0.to_biguint(), v.1.to_biguint(), v.2.to_biguint()))
-            .collect::<Vec<_>>(),
-    );
-    out
+    let mut out = Vec::new();
+    let mut x = start_at;
+
+    while out.len() < count {
+        let element = T::from_usize(x);
+        match element.legendre() {
+            1 => {
+                // number is a residue
+                // return number and roots
+                let low_root = element.sqrt();
+                let high_root = -low_root.clone();
+
+                assert_eq!(element, low_root.clone() * low_root.clone());
+                assert_eq!(element, high_root.clone() * high_root.clone());
+                assert_eq!(-element.clone(), low_root.clone() * high_root.clone());
+
+                println!(
+                    "    {}_{} = {} * {}",
+                    element.serialize().red().bold(),
+                    T::name_str().to_string().green().bold(),
+                    low_root,
+                    high_root
+                );
+
+                out.push((element, low_root, high_root));
+            }
+            -1 => {
+                // number is a non-residue (no roots in field)
+            }
+            0 => {
+                // number is 0, skip
+            }
+            _ => unreachable!(),
+        }
+        x += 1;
+    }
 }
