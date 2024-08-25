@@ -94,6 +94,46 @@ pub trait FieldElement:
         BigUint::from_str(&self.serialize()).unwrap()
     }
 
+    /// A string representation of a field element using
+    /// only the lower 60 bits of the element. A normal
+    /// decimal representation will be given if it's shorter
+    /// than the lower 60 bit representation.
+    ///
+    /// This is a lossy representation.
+    fn lower60_string(&self) -> String {
+        let two_fifty = BigUint::from(2_u64.pow(60));
+        let plain_str = self.serialize();
+        let l50_str = format!("{}_L60", self.to_biguint() % two_fifty);
+        if l50_str.len() < plain_str.len() {
+            l50_str
+        } else {
+            plain_str
+        }
+    }
+
+    /// Take a logarithm using a custom base and return the
+    /// floored value. `O(logb(n))` time complexity where `n`
+    /// is the size of the element.
+    fn log_floor(&self, b: Self) -> u32 {
+        if b > *self {
+            return 0;
+        } else if b == *self {
+            return 1;
+        }
+        let e = self.to_biguint();
+        let b = b.to_biguint();
+        let mut x = b.clone();
+        let mut i = 1;
+        while x < e {
+            x *= b.clone();
+            if x >= e {
+                return i;
+            }
+            i += 1;
+        }
+        unreachable!();
+    }
+
     /// Calculate the [legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol#Definition)
     /// for a field element. Used to determine if the
     /// element is a quadratic residue.

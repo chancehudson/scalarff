@@ -14,21 +14,30 @@ fn main() {
     let count = 1000;
 
     stat_exec(
-        &format!("{count} residues in {}", Bn128FieldElement::name_str()),
+        &format!(
+            "{count} quadratic residues in {}",
+            Bn128FieldElement::name_str()
+        ),
         &mut || {
             print_residues::<Bn128FieldElement>(start_at, count);
         },
     );
 
     stat_exec(
-        &format!("{count} residues in {}", Curve25519FieldElement::name_str()),
+        &format!(
+            "{count} quadratic residues in {}",
+            Curve25519FieldElement::name_str()
+        ),
         &mut || {
             print_residues::<Curve25519FieldElement>(start_at, count);
         },
     );
 
     stat_exec(
-        &format!("{count} residues in {}", FoiFieldElement::name_str()),
+        &format!(
+            "{count} quadratic residues in {}",
+            FoiFieldElement::name_str()
+        ),
         &mut || print_residues::<FoiFieldElement>(start_at, count),
     );
 
@@ -37,7 +46,7 @@ fn main() {
 
 /// Find the next `count` positive quadratic residues starting from element `start_at`
 /// IDEA: find the _nearest_ quadratic residues. e.g. search in both directions: positive and negative
-fn print_residues<T: FieldElement>(start_at: usize, count: usize) {
+fn print_residues<'a, T: FieldElement>(start_at: usize, count: usize) {
     let field_name = T::name_str();
     let message = format!(
         "finding the next {count} residues in field {}: starting at {start_at}",
@@ -47,11 +56,9 @@ fn print_residues<T: FieldElement>(start_at: usize, count: usize) {
     .bold();
     println!("{message}",);
 
-    // (element, low_root, high_root)
-    let mut out = Vec::new();
+    let mut found_count = 0;
     let mut x = start_at;
-
-    while out.len() < count {
+    while found_count < count {
         let element = T::from_usize(x);
         match element.legendre() {
             1 => {
@@ -65,14 +72,13 @@ fn print_residues<T: FieldElement>(start_at: usize, count: usize) {
                 assert_eq!(-element.clone(), low_root.clone() * high_root.clone());
 
                 println!(
-                    "    {}_{} = {} * {}",
-                    element.serialize().red().bold(),
-                    T::name_str().to_string().green().bold(),
-                    low_root,
-                    high_root
+                    "    -{}_{} = {} * {}",
+                    element.lower60_string().red().bold(),
+                    T::name_str().green().bold(),
+                    low_root.lower60_string(),
+                    high_root.lower60_string(),
                 );
-
-                out.push((element, low_root, high_root));
+                found_count += 1;
             }
             -1 => {
                 // number is a non-residue (no roots in field)
