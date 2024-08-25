@@ -13,8 +13,8 @@ pub fn print_separator() {
 static TRANSCRIPT: RwLock<Vec<(String, Duration)>> = RwLock::new(vec![]);
 
 /// Execute a closure and print+store information about the
-/// execution. Use `summary_exec` to print a summary of timings
-/// before a program exits.
+/// execution. Closure should return a string that will be used
+/// to identify the closure in a summary (see `summary_exec`).
 pub fn stat_exec(f: &mut dyn Fn() -> String) {
     let now = Instant::now();
     let name = f();
@@ -31,6 +31,8 @@ pub fn stat_exec(f: &mut dyn Fn() -> String) {
 }
 
 /// Prints a summary of all `stat_exec` invocations.
+/// Call this just before the program exits to show a timing
+/// summary.
 pub fn summary_exec() {
     let transcript = TRANSCRIPT.read().unwrap();
     for (name, elapsed) in &*transcript {
