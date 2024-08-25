@@ -1,4 +1,4 @@
-# scalarff
+# scalarff [![CircleCI](https://dl.circleci.com/status-badge/img/gh/chancehudson/scalarff/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/chancehudson/scalarff/tree/main)
 
 A minimal, opinionated, library for working with scalar finite fields.
 
@@ -10,7 +10,7 @@ This library exports a `FieldElement` trait and a set of structs conforming to i
 - `Curve25519FieldElement` - `curve25519` field element [powered by](https://docs.rs/curve25519-dalek/latest/curve25519_dalek/scalar/index.html)
 - `Bn128FieldElement` - `alt_bn128` field element [powered by](https://docs.rs/ark-bn254/0.4.0/ark_bn254/)
 
-See the [1000 residues](./examples/1000_residues.rs) example to get started.
+See the [1000 residues](https://github.com/chancehudson/scalarff/blob/main/examples/1000_residues.rs) example to get started.
 
 ```
 finding the next 10 residues in field alt_bn128: starting at 360
