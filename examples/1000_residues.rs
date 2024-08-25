@@ -1,11 +1,12 @@
 use scalarff::alt_bn128::Bn128FieldElement;
 use scalarff::curve_25519::Curve25519FieldElement;
 use scalarff::foi::FoiFieldElement;
-use scalarff::print_separator;
 use scalarff::quadratic_residues_at;
 use scalarff::stat_exec;
 use scalarff::BigUint;
 use scalarff::FieldElement;
+
+use colored::Colorize;
 
 fn main() {
     // calculate the next {count} square roots in a field
@@ -19,8 +20,11 @@ fn main() {
         let residues = print_residues::<F>(start_at, count);
         for (element, low_root, high_root) in &residues {
             println!(
-                "    {}[{}]: {} {}",
-                field_name, element, low_root, high_root
+                "    {} -{} = {} * {}",
+                field_name.to_string().green().bold(),
+                element.to_string().red().bold(),
+                low_root.to_string(),
+                high_root
             );
         }
     });
@@ -31,8 +35,11 @@ fn main() {
         let residues = print_residues::<F>(start_at, count);
         for (element, low_root, high_root) in &residues {
             println!(
-                "    {}[{}]: {} {}",
-                field_name, element, low_root, high_root
+                "    {} -{} = {} * {}",
+                field_name.to_string().green().bold(),
+                element.to_string().red().bold(),
+                low_root.to_string(),
+                high_root
             );
         }
     });
@@ -43,8 +50,11 @@ fn main() {
         let residues = print_residues::<F>(start_at, count);
         for (element, low_root, high_root) in &residues {
             println!(
-                "    {}[{}]: {} {}",
-                field_name, element, low_root, high_root
+                "    {} -{} = {} * {}",
+                field_name.to_string().green().bold(),
+                element.to_string().red().bold(),
+                low_root.to_string(),
+                high_root
             );
         }
     });
@@ -54,11 +64,13 @@ fn print_residues<T: FieldElement>(
     start_at: usize,
     count: usize,
 ) -> Vec<(BigUint, BigUint, BigUint)> {
-    print_separator();
-    println!(
+    let message = format!(
         "finding the next {count} residues in field {}: starting at {start_at}",
         T::name_str()
-    );
+    )
+    .blue()
+    .bold();
+    println!("{message}",);
     // (element, low_root, high_root)
     let mut out = vec![];
     let residues = quadratic_residues_at::<T>(start_at.into(), count.into());
