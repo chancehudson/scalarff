@@ -1,9 +1,15 @@
 [package]
 name = "scalarff"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2021"
+authors = ["Chance Hudson <PSE>"]
+description = "A minimal, opinionated, library for working with scalar finite fields."
+homepage = "https://github.com/chancehudson/scalarff"
+repository = "https://github.com/chancehudson/scalarff.git"
+license = "MIT OR Apache-2.0"
 
 [lib]
+name = "scalarff"
 
 [dependencies]
 anyhow = "1.0.86"
@@ -16,3 +22,7 @@ ff = "0.13.0"
 num-bigint = "0.4.6"
 num-integer = "0.1.46"
 colored = "2.1.0"
+
+[[example]]
+name = "1000_residues"
+crate-type = ["bin"]
