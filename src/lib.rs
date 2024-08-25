@@ -60,21 +60,21 @@ pub trait FieldElement:
     }
 
     /// Get a valid string representation
-    /// of the element
+    /// of the element.
     fn serialize(&self) -> String;
 
     /// Parse an element from a supposedly
-    /// valid string representation
+    /// valid string representation.
     fn deserialize(str: &str) -> Self;
 
     /// The prime modulus of the field as an
-    /// arbitrary precision integer
+    /// arbitrary precision integer.
     fn prime() -> BigUint;
     fn name_str() -> &'static str;
 
     /// Parse an element from a usize
     /// throws if the field size is smaller than
-    /// the usize on the machine
+    /// the usize on the machine.
     fn from_usize(value: usize) -> Self {
         // usize -> u64 conversion only fails
         // on >64 bit systems, e.g. a 128 bit
@@ -83,13 +83,15 @@ pub trait FieldElement:
     }
 
     /// Get a `num_bigint::BigUint` representation for arbitrary
-    /// precision operations
+    /// precision operations.
     fn to_biguint(&self) -> num_bigint::BigUint {
         // todo: use bytes
         BigUint::from_str(&self.serialize()).unwrap()
     }
 
-    /// calculate the [legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol#Definition) for a field element
+    /// Calculate the [legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol#Definition)
+    /// for a field element. Used to determine if the
+    /// element is a quadratic residue.
     fn legendre(&self) -> i32 {
         if self == &Self::zero() {
             return 0;
@@ -109,10 +111,8 @@ pub trait FieldElement:
         }
     }
 
-    /// [Kumar 08](https://arxiv.org/pdf/2008.11814v4) prime field square root
-    ///
-    /// always returns the smaller root
-    /// e.g. the positive root
+    /// [Kumar 08](https://arxiv.org/pdf/2008.11814v4) prime field square root implementation.
+    /// Always returns the smaller root e.g. the positive root.
     fn sqrt(&self) -> Self {
         if self == &Self::zero() {
             return Self::zero();

@@ -1,3 +1,7 @@
+//! A vector/matrix structure for doing arithmetic on
+//! sets of `FieldElement`. Matrices can be 1 dimensional
+//! for representing vectors.
+//!
 use std::fmt::Display;
 use std::ops::Add;
 use std::ops::AddAssign;
