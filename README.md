@@ -1,10 +1,10 @@
-# scalarff [![CircleCI](https://dl.circleci.com/status-badge/img/gh/chancehudson/scalarff/tree/main.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/chancehudson/scalarff/tree/main)
+# scalarff [![Build](https://img.shields.io/circleci/build/github/chancehudson/scalarff/main)](https://dl.circleci.com/status-badge/redirect/gh/chancehudson/scalarff/tree/main) [![Docs](https://img.shields.io/docsrs/scalarff)](https://docs.rs/scalarff) [![Version](https://img.shields.io/crates/v/scalarff)](https://crates.io/crates/scalarff)
 
 A minimal, opinionated, library for working with scalar finite fields.
 
 ## Usage
 
-This library exports a [`FieldElement`](https://docs.rs/scalarff/latest/scalarff/trait.FieldElement.html) trait and concrete implementations for the following curves:
+This library exports a [`FieldElement`](https://docs.rs/scalarff/latest/scalarff/trait.FieldElement.html#required-methods) trait and concrete implementations for the following curves:
 
 - `FoiFieldElement` - `2^64 - 2^32 + 1` field element [powered by](https://docs.rs/twenty-first/latest/twenty_first/math/b_field_element/struct.BFieldElement.html)
 - `Curve25519FieldElement` - `curve25519` field element [powered by](https://docs.rs/curve25519-dalek/latest/curve25519_dalek/scalar/index.html)
