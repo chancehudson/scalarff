@@ -1,3 +1,10 @@
+//! A minimal, opinionated, library for working with scalar finite fields.
+//!
+//! Curated scalar finite field implementations from the best cryptography libraries.
+//!
+//! Provides a `FieldElement` trait for working with residues, and a `to_biguint`
+//! method for arbitrary precision operations.
+//!
 use std::fmt::Debug;
 use std::fmt::Display;
 use std::hash::Hash;
@@ -18,7 +25,7 @@ pub mod curve_25519;
 pub mod foi;
 mod functions;
 pub mod matrix;
-pub mod timing;
+mod timing;
 
 pub use functions::quadratic_residues_at;
 pub use num_bigint::BigUint;
@@ -54,12 +61,23 @@ pub trait FieldElement:
         Self::from(1)
     }
 
+    /// Get a valid string representation
+    /// of the element
     fn serialize(&self) -> String;
+
+    /// Parse an element from a supposedly
+    /// valid string representation
     fn deserialize(str: &str) -> Self;
+
+    /// The prime modulus of the field as an
+    /// arbitrary precision integer
     fn prime() -> BigUint;
     fn name_str() -> &'static str;
 
-    // TODO: move this into a normal trait
+    /// Parse an element from a usize
+    ///
+    /// throws if the field size is smaller than
+    /// the usize on the machine
     fn from_usize(value: usize) -> Self {
         // usize -> u64 conversion only fails
         // on >64 bit systems, e.g. a 128 bit
@@ -67,13 +85,14 @@ pub trait FieldElement:
         Self::from(u64::try_from(value).unwrap())
     }
 
+    /// Get a `num_bigint::BigUint` representation for arbitrary
+    /// precision operations
     fn to_biguint(&self) -> num_bigint::BigUint {
         // todo: use bytes
         BigUint::from_str(&self.serialize()).unwrap()
     }
 
-    /// calculate the legendre symbol for a field element
-    /// https://en.wikipedia.org/wiki/Legendre_symbol#Definition
+    /// calculate the [legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol#Definition) for a field element
     fn legendre(&self) -> i32 {
         if self == &Self::zero() {
             return 0;
@@ -93,8 +112,8 @@ pub trait FieldElement:
         }
     }
 
-    /// Kumar 08
-    /// https://arxiv.org/pdf/2008.11814v4
+    /// [Kumar 08](https://arxiv.org/pdf/2008.11814v4)
+    ///
     /// always returns the smaller root
     /// e.g. the positive root
     fn sqrt(&self) -> Self {
