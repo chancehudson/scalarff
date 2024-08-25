@@ -2,7 +2,8 @@ use scalarff::alt_bn128::Bn128FieldElement;
 use scalarff::curve_25519::Curve25519FieldElement;
 use scalarff::foi::FoiFieldElement;
 use scalarff::quadratic_residues_at;
-use scalarff::stat_exec;
+use scalarff::timing::stat_exec;
+use scalarff::timing::summary_exec;
 use scalarff::BigUint;
 use scalarff::FieldElement;
 
@@ -12,52 +13,63 @@ fn main() {
     // calculate the next {count} square roots in a field
     // and print them
     let start_at = 360;
-    let count = 10;
+    let count = 1000;
 
-    stat_exec(&mut || {
-        type F = Bn128FieldElement;
-        let field_name = F::name_str();
-        let residues = print_residues::<F>(start_at, count);
-        for (element, low_root, high_root) in &residues {
-            println!(
-                "    {} -{} = {} * {}",
-                field_name.to_string().green().bold(),
-                element.to_string().red().bold(),
-                low_root.to_string(),
-                high_root
-            );
-        }
-    });
+    stat_exec(
+        &format!("{count} residues in {}", Bn128FieldElement::name_str()),
+        &mut || {
+            type F = Bn128FieldElement;
+            let field_name = F::name_str();
+            let residues = print_residues::<F>(start_at, count);
+            for (element, low_root, high_root) in &residues {
+                println!(
+                    "    {}_{} = {} * {}",
+                    element.to_string().red().bold(),
+                    field_name.to_string().green().bold(),
+                    low_root.to_string(),
+                    high_root
+                );
+            }
+        },
+    );
 
-    stat_exec(&mut || {
-        type F = Curve25519FieldElement;
-        let field_name = F::name_str();
-        let residues = print_residues::<F>(start_at, count);
-        for (element, low_root, high_root) in &residues {
-            println!(
-                "    {} -{} = {} * {}",
-                field_name.to_string().green().bold(),
-                element.to_string().red().bold(),
-                low_root.to_string(),
-                high_root
-            );
-        }
-    });
+    stat_exec(
+        &format!("{count} residues in {}", Curve25519FieldElement::name_str()),
+        &mut || {
+            type F = Curve25519FieldElement;
+            let field_name = F::name_str();
+            let residues = print_residues::<F>(start_at, count);
+            for (element, low_root, high_root) in &residues {
+                println!(
+                    "    {}_{} = {} * {}",
+                    element.to_string().red().bold(),
+                    field_name.to_string().green().bold(),
+                    low_root.to_string(),
+                    high_root
+                );
+            }
+        },
+    );
 
-    stat_exec(&mut || {
-        type F = FoiFieldElement;
-        let field_name = F::name_str();
-        let residues = print_residues::<F>(start_at, count);
-        for (element, low_root, high_root) in &residues {
-            println!(
-                "    {} -{} = {} * {}",
-                field_name.to_string().green().bold(),
-                element.to_string().red().bold(),
-                low_root.to_string(),
-                high_root
-            );
-        }
-    });
+    stat_exec(
+        &format!("{count} residues in {}", FoiFieldElement::name_str()),
+        &mut || {
+            type F = Curve25519FieldElement;
+            let field_name = F::name_str();
+            let residues = print_residues::<F>(start_at, count);
+            for (element, low_root, high_root) in &residues {
+                println!(
+                    "    {}_{} = {} * {}",
+                    element.to_string().red().bold(),
+                    field_name.to_string().green().bold(),
+                    low_root.to_string(),
+                    high_root
+                );
+            }
+        },
+    );
+
+    summary_exec();
 }
 
 fn print_residues<T: FieldElement>(

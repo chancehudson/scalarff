@@ -1,3 +1,5 @@
+//! Miscellaneous functions for field elements.
+//!
 use super::FieldElement;
 
 /// Find the next `count` positive quadratic residues starting from element `start`
