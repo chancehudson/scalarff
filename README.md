@@ -12,7 +12,7 @@ This library exports a [`FieldElement`](https://docs.rs/scalarff/latest/scalarff
 
 See the [1000 residues](https://github.com/chancehudson/scalarff/blob/main/examples/1000_residues.rs) example to get started.
 
-```
+```js
 finding the next 10 residues in field alt_bn128: starting at 360
     -361_alt_bn128 = 19 * 279774667609210862_L60
     -362_alt_bn128 = 234352660719301385_L60 * 45422006889909496_L60
@@ -24,7 +24,7 @@ finding the next 10 residues in field alt_bn128: starting at 360
     -382_alt_bn128 = 992674259711445781_L60 * 440021912504612076_L60
     -383_alt_bn128 = 867565972486375475_L60 * 565130199729682382_L60
     -384_alt_bn128 = 109351148931867722_L60 * 170423518677343159_L60
-^^^^^^^^^^ function excecuted in 23 ms ^^^^^^^^^^
+^^^^^^^^^^ function executed in 23 ms ^^^^^^^^^^
 ||||||||||||||||||||||||||||||||||||||||
 finding the next 10 residues in field curve25519: starting at 360
     -361_curve25519 = 19 * 581636266764129242_L60
@@ -37,7 +37,7 @@ finding the next 10 residues in field curve25519: starting at 360
     -373_curve25519 = 847841932944108498_L60 * 886715838426867739_L60
     -375_curve25519 = 777357655433650296_L60 * 957200115937325941_L60
     -377_curve25519 = 1097662937271356306_L60 * 636894834099619931_L60
-^^^^^^^^^^ function excecuted in 3 ms ^^^^^^^^^^
+^^^^^^^^^^ function executed in 3 ms ^^^^^^^^^^
 ||||||||||||||||||||||||||||||||||||||||
 finding the next 10 residues in field 0xfoi: starting at 360
     -360_0xfoi = 4886810760654287587 * 13559933308760296734
@@ -50,9 +50,9 @@ finding the next 10 residues in field 0xfoi: starting at 360
     -373_0xfoi = 8308875621651992349 * 10137868447762591972
     -375_0xfoi = 8637146607354536426 * 9809597462060047895
     -384_0xfoi = 1152912708379604992 * 8791932274689_L60
-^^^^^^^^^^ function excecuted in 3 ms ^^^^^^^^^^
+^^^^^^^^^^ function executed in 3 ms ^^^^^^^^^^
 ||||||||||||||||||||||||||||||||||||||||
-10 quadratic residues in alt_bn128 excecuted in 23 ms
-10 quadratic residues in curve25519 excecuted in 3 ms
-10 quadratic residues in 0xfoi excecuted in 3 ms
+10 quadratic residues in alt_bn128 executed in 23 ms
+10 quadratic residues in curve25519 executed in 3 ms
+10 quadratic residues in 0xfoi executed in 3 ms
 ```

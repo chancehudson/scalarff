@@ -22,7 +22,7 @@ pub fn stat_exec(f: &mut dyn Fn() -> String) {
     let time_str = format!("{} ms", elapsed.as_millis()).bold().italic();
     println!(
         "{}",
-        format!("^^^^^^^^^^ function excecuted in {time_str} ^^^^^^^^^^",).green()
+        format!("^^^^^^^^^^ function executed in {time_str} ^^^^^^^^^^",).green()
     );
     print_separator();
 
@@ -37,7 +37,7 @@ pub fn summary_exec() {
         let time_str = format!("{} ms", elapsed.as_millis()).bold().italic();
         println!(
             "{}",
-            format!("{} excecuted in {time_str}", name.bold()).green()
+            format!("{} executed in {time_str}", name.bold()).green()
         );
     }
 }

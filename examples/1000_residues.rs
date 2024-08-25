@@ -34,7 +34,7 @@ fn main() {
 
 /// Find the next `count` positive quadratic residues starting from element `start_at`
 /// IDEA: find the _nearest_ quadratic residues. e.g. search in both directions: positive and negative
-fn print_residues<'a, T: FieldElement>(start_at: usize, count: usize) {
+fn print_residues<T: FieldElement>(start_at: usize, count: usize) {
     let field_name = T::name_str();
     let message = format!(
         "finding the next {count} residues in field {}: starting at {start_at}",
