@@ -104,7 +104,9 @@ pub trait FieldElement:
         let two_fifty = BigUint::from(2_u64.pow(60));
         let plain_str = self.serialize();
         let l50_str = format!("{}_L60", self.to_biguint() % two_fifty);
-        if l50_str.len() < plain_str.len() {
+        // add a couple characters so we always print
+        // 0xfoi elements as decimal strings
+        if l50_str.len() + 3 < plain_str.len() {
             l50_str
         } else {
             plain_str
