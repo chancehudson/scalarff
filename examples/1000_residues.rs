@@ -13,33 +13,21 @@ fn main() {
     let start_at = 360;
     let count = 1000;
 
-    stat_exec(
-        &format!(
-            "{count} quadratic residues in {}",
-            Bn128FieldElement::name_str()
-        ),
-        &mut || {
-            print_residues::<Bn128FieldElement>(start_at, count);
-        },
-    );
-
-    stat_exec(
-        &format!(
-            "{count} quadratic residues in {}",
-            Curve25519FieldElement::name_str()
-        ),
-        &mut || {
-            print_residues::<Curve25519FieldElement>(start_at, count);
-        },
-    );
-
-    stat_exec(
-        &format!(
-            "{count} quadratic residues in {}",
-            FoiFieldElement::name_str()
-        ),
-        &mut || print_residues::<FoiFieldElement>(start_at, count),
-    );
+    stat_exec(&mut || {
+        type T = Bn128FieldElement;
+        print_residues::<T>(start_at, count);
+        format!("{count} quadratic residues in {}", T::name_str())
+    });
+    stat_exec(&mut || {
+        type T = Curve25519FieldElement;
+        print_residues::<T>(start_at, count);
+        format!("{count} quadratic residues in {}", T::name_str())
+    });
+    stat_exec(&mut || {
+        type T = FoiFieldElement;
+        print_residues::<T>(start_at, count);
+        format!("{count} quadratic residues in {}", T::name_str())
+    });
 
     summary_exec();
 }

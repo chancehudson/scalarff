@@ -15,9 +15,9 @@ static TRANSCRIPT: RwLock<Vec<(String, Duration)>> = RwLock::new(vec![]);
 /// Execute a closure and print+store information about the
 /// execution. Use `summary_exec` to print a summary of timings
 /// before a program exits.
-pub fn stat_exec(name: &str, f: &mut dyn Fn()) {
+pub fn stat_exec(f: &mut dyn Fn() -> String) {
     let now = Instant::now();
-    f();
+    let name = f();
     let elapsed = now.elapsed();
     let time_str = format!("{} ms", elapsed.as_millis()).bold().italic();
     println!(
