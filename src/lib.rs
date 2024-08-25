@@ -29,10 +29,11 @@ pub use curve_25519::Curve25519FieldElement;
 pub use foi::FoiFieldElement;
 pub use num_bigint::BigUint;
 
-pub fn print_separator() {
-    println!("||||||||||||||||||||||||||||||||||||||||");
-}
-
+/// A generic representation of a scalar finite field element.
+/// For use in internal module logic. Supports field operations
+/// using builting operators (*-+/) and other convenience traits.
+/// Handles serialization and deserialization to a reasonable
+/// string representation.
 pub trait FieldElement:
     Add<Output = Self>
     + AddAssign
@@ -51,10 +52,12 @@ pub trait FieldElement:
     + From<u64>
     + Display
 {
+    /// Get the zero element.
     fn zero() -> Self {
         Self::from(0)
     }
 
+    /// Get the one element.
     fn one() -> Self {
         Self::from(1)
     }
@@ -70,6 +73,8 @@ pub trait FieldElement:
     /// The prime modulus of the field as an
     /// arbitrary precision integer.
     fn prime() -> BigUint;
+
+    /// A short string identifier for the field.
     fn name_str() -> &'static str;
 
     /// Parse an element from a usize

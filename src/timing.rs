@@ -6,7 +6,9 @@ use std::time::Instant;
 
 use colored::Colorize;
 
-use super::print_separator;
+pub fn print_separator() {
+    println!("||||||||||||||||||||||||||||||||||||||||");
+}
 
 static TRANSCRIPT: RwLock<Vec<(String, Duration)>> = RwLock::new(vec![]);
 
