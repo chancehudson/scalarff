@@ -25,6 +25,9 @@ mod functions;
 pub mod matrix;
 mod timing;
 
+pub use alt_bn128::Bn128FieldElement;
+pub use curve_25519::Curve25519FieldElement;
+pub use foi::FoiFieldElement;
 pub use functions::quadratic_residues_at;
 pub use num_bigint::BigUint;
 pub use timing::stat_exec;
