@@ -7,6 +7,10 @@ use super::FieldElement;
 pub type Bn128FieldElement = Fr;
 
 impl FieldElement for Fr {
+    fn name_str() -> &'static str {
+        "alt_bn128"
+    }
+
     fn zero() -> Self {
         Self::from_str("0").unwrap()
     }

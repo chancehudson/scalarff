@@ -42,6 +42,7 @@ pub trait FieldElement:
     fn serialize(&self) -> String;
     fn deserialize(str: &str) -> Self;
     fn prime() -> BigUint;
+    fn name_str() -> &'static str;
 
     /// calculate the legendre symbol for a field element
     /// https://en.wikipedia.org/wiki/Legendre_symbol#Definition

@@ -21,6 +21,10 @@ use super::FieldElement;
 pub struct Curve25519FieldElement(Scalar);
 
 impl FieldElement for Curve25519FieldElement {
+    fn name_str() -> &'static str {
+        "curve25519"
+    }
+
     fn zero() -> Self {
         Curve25519FieldElement(Scalar::ZERO)
     }

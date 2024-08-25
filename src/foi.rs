@@ -20,6 +20,10 @@ use super::FieldElement;
 pub struct FoiFieldElement(BFieldElement);
 
 impl FieldElement for FoiFieldElement {
+    fn name_str() -> &'static str {
+        "0xfoi"
+    }
+
     fn zero() -> Self {
         Self(BFieldElement::from(0))
     }
