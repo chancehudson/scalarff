@@ -8,6 +8,10 @@ workflows:
           matrix:
             parameters:
               rust-version: ["stable", "beta", "nightly"]
+      - example-residues:
+          matrix:
+            parameters:
+              rust-version: ["stable", "beta", "nightly"]
 
 step_defs:
   - run: &rust_version
@@ -63,3 +67,19 @@ jobs:
       - run:
           name: Test
           command: cargo test
+
+  example-residues:
+    parameters:
+      rust-version:
+        type: string
+    machine:
+      image: ubuntu-2204:current
+    steps:
+      - checkout
+      - run: *rust_version
+      - run:
+          name: Build
+          command: cargo build --release
+      - run:
+          name: Run example
+          command: cargo run --example 1000_residues --release
