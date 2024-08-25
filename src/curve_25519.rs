@@ -25,14 +25,6 @@ impl FieldElement for Curve25519FieldElement {
         "curve25519"
     }
 
-    fn zero() -> Self {
-        Curve25519FieldElement(Scalar::ZERO)
-    }
-
-    fn one() -> Self {
-        Curve25519FieldElement(Scalar::ONE)
-    }
-
     fn prime() -> BigUint {
         // the modulus returned by this implementation is a hex string
         // BigUint doesn't like that so we do some nonsense to calculate

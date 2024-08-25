@@ -24,14 +24,6 @@ impl FieldElement for FoiFieldElement {
         "0xfoi"
     }
 
-    fn zero() -> Self {
-        Self(BFieldElement::from(0))
-    }
-
-    fn one() -> Self {
-        Self(BFieldElement::from(1))
-    }
-
     fn prime() -> num_bigint::BigUint {
         num_bigint::BigUint::from(BFieldElement::P)
     }

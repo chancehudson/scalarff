@@ -11,14 +11,6 @@ impl FieldElement for Fr {
         "alt_bn128"
     }
 
-    fn zero() -> Self {
-        Self::from_str("0").unwrap()
-    }
-
-    fn one() -> Self {
-        Self::from_str("1").unwrap()
-    }
-
     fn prime() -> num_bigint::BigUint {
         Self::MODULUS.into()
     }

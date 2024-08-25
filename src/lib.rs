@@ -11,13 +11,22 @@ use std::ops::Sub;
 use std::ops::SubAssign;
 use std::str::FromStr;
 
-use num_bigint::BigUint;
 use num_integer::Integer;
 
 pub mod alt_bn128;
 pub mod curve_25519;
 pub mod foi;
+mod functions;
 pub mod matrix;
+pub mod timing;
+
+pub use functions::quadratic_residues_at;
+pub use num_bigint::BigUint;
+pub use timing::stat_exec;
+
+pub fn print_separator() {
+    println!("||||||||||||||||||||||||||||||||||||||||");
+}
 
 pub trait FieldElement:
     Add<Output = Self>
@@ -37,12 +46,31 @@ pub trait FieldElement:
     + From<u64>
     + Display
 {
-    fn one() -> Self;
-    fn zero() -> Self;
+    fn zero() -> Self {
+        Self::from(0)
+    }
+
+    fn one() -> Self {
+        Self::from(1)
+    }
+
     fn serialize(&self) -> String;
     fn deserialize(str: &str) -> Self;
     fn prime() -> BigUint;
     fn name_str() -> &'static str;
+
+    // TODO: move this into a normal trait
+    fn from_usize(value: usize) -> Self {
+        // usize -> u64 conversion only fails
+        // on >64 bit systems, e.g. a 128 bit
+        // computer
+        Self::from(u64::try_from(value).unwrap())
+    }
+
+    fn to_biguint(&self) -> num_bigint::BigUint {
+        // todo: use bytes
+        BigUint::from_str(&self.serialize()).unwrap()
+    }
 
     /// calculate the legendre symbol for a field element
     /// https://en.wikipedia.org/wiki/Legendre_symbol#Definition
