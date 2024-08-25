@@ -1,7 +1,5 @@
 //! A minimal, opinionated, library for working with scalar finite fields.
-//!
 //! Curated scalar finite field implementations from the best cryptography libraries.
-//!
 //! Provides a `FieldElement` trait for working with residues, and a `to_biguint`
 //! method for arbitrary precision operations.
 //!
@@ -75,7 +73,6 @@ pub trait FieldElement:
     fn name_str() -> &'static str;
 
     /// Parse an element from a usize
-    ///
     /// throws if the field size is smaller than
     /// the usize on the machine
     fn from_usize(value: usize) -> Self {
@@ -112,7 +109,7 @@ pub trait FieldElement:
         }
     }
 
-    /// [Kumar 08](https://arxiv.org/pdf/2008.11814v4)
+    /// [Kumar 08](https://arxiv.org/pdf/2008.11814v4) prime field square root
     ///
     /// always returns the smaller root
     /// e.g. the positive root
