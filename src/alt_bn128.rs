@@ -60,14 +60,6 @@ impl FieldElement for Bn128FieldElement {
     }
 }
 
-impl PartialOrd for Bn128FieldElement {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let a = BigUint::from_str(&self.serialize()).unwrap();
-        let b = BigUint::from_str(&other.serialize()).unwrap();
-        Some(a.cmp(&b))
-    }
-}
-
 impl Debug for Bn128FieldElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.serialize())

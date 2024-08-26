@@ -60,14 +60,6 @@ impl FieldElement for Curve25519FieldElement {
     }
 }
 
-impl PartialOrd for Curve25519FieldElement {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let a = BigUint::from_str(&self.serialize()).unwrap();
-        let b = BigUint::from_str(&other.serialize()).unwrap();
-        Some(a.cmp(&b))
-    }
-}
-
 impl Debug for Curve25519FieldElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", BigUint::from_bytes_le(self.0.as_bytes()))

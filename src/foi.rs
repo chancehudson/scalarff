@@ -11,7 +11,6 @@ use std::ops::Sub;
 use std::ops::SubAssign;
 use std::str::FromStr;
 
-use num_bigint::BigUint;
 use twenty_first::math::b_field_element::BFieldElement;
 
 use super::FieldElement;
@@ -52,14 +51,6 @@ impl FieldElement for FoiFieldElement {
             }
         }
         Self(BFieldElement::from(u64::from_le_bytes(sized_bytes)))
-    }
-}
-
-impl PartialOrd for FoiFieldElement {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let a = BigUint::from_str(&self.serialize()).unwrap();
-        let b = BigUint::from_str(&other.serialize()).unwrap();
-        Some(a.cmp(&b))
     }
 }
 
