@@ -45,7 +45,6 @@ pub trait FieldElement:
     + SubAssign
     + FromStr
     + PartialEq
-    + PartialOrd
     + Clone
     + Hash
     + Debug
@@ -91,14 +90,30 @@ pub trait FieldElement:
     /// precision operations.
     fn to_biguint(&self) -> num_bigint::BigUint {
         // todo: use bytes
-        BigUint::from_str(&self.serialize()).unwrap()
+        // BigUint::from_str(&self.serialize()).unwrap()
+        BigUint::from_bytes_le(self.to_bytes_le().as_slice())
     }
+
+    /// Convert a `num_bigint::BigUint` into a field element
+    /// precision operations. Numbers will be converted % self.prime()
+    fn from_biguint(v: &BigUint) -> Self {
+        Self::from_bytes_le(&v.clone().to_bytes_le()[..])
+    }
+
+    /// Parse an element from a byte representation. Panics
+    /// if the byte representation is too long. e.g. if the bytes
+    /// represent a value > Self::prime().
+    fn from_bytes_le(bytes: &[u8]) -> Self;
+
+    /// Convert a field element to a byte representation.
+    /// The number of bytes may be variable, but is guaranteed
+    /// to be accepted by `from_bytes_le` for the same curve.
+    fn to_bytes_le(&self) -> Vec<u8>;
 
     /// A string representation of a field element using
     /// only the lower 60 bits of the element. A normal
     /// decimal representation will be given if it's shorter
     /// than the lower 60 bit representation.
-    ///
     /// This is a lossy representation.
     fn lower60_string(&self) -> String {
         let two_fifty = BigUint::from(2_u64.pow(60));
@@ -117,7 +132,7 @@ pub trait FieldElement:
     /// floored value. `O(logb(n))` time complexity where `n`
     /// is the size of the element.
     fn log_floor(&self, b: Self) -> u32 {
-        if b > *self {
+        if b.to_biguint() > self.to_biguint() {
             return 0;
         } else if b == *self {
             return 1;
@@ -209,13 +224,12 @@ pub trait FieldElement:
             &BigUint::from_str(&bpow.serialize()).unwrap(),
             &Self::prime(),
         );
-        let o = (a_ * b_) % Self::prime();
-        let root = Self::deserialize(&o.to_string());
-        let other_root = -root.clone();
+        let root = (a_ * b_) % Self::prime();
+        let other_root = Self::prime() - root.clone();
         if root > other_root {
-            other_root
+            Self::from_biguint(&other_root)
         } else {
-            root
+            Self::from_biguint(&root)
         }
     }
 }

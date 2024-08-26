@@ -35,6 +35,24 @@ impl FieldElement for FoiFieldElement {
     fn deserialize(str: &str) -> Self {
         Self(BFieldElement::from_str(str).unwrap())
     }
+
+    fn to_bytes_le(&self) -> Vec<u8> {
+        self.0.value().to_le_bytes().to_vec()
+    }
+
+    fn from_bytes_le(bytes: &[u8]) -> Self {
+        const BYTES_SIZE: usize = 8;
+        let mut sized_bytes = [0_u8; BYTES_SIZE];
+        if bytes.len() > BYTES_SIZE {
+            panic!("incorrect number of bytes passed to Curve25519FieldElement: expected {BYTES_SIZE} got {}", bytes.len());
+        }
+        for x in 0..BYTES_SIZE {
+            if x < bytes.len() {
+                sized_bytes[x] = bytes[x];
+            }
+        }
+        Self(BFieldElement::from(u64::from_le_bytes(sized_bytes)))
+    }
 }
 
 impl PartialOrd for FoiFieldElement {

@@ -39,6 +39,25 @@ impl FieldElement for Curve25519FieldElement {
     fn deserialize(str: &str) -> Self {
         Self::from_str(str).unwrap()
     }
+
+    fn to_bytes_le(&self) -> Vec<u8> {
+        self.0.to_bytes().to_vec()
+    }
+
+    fn from_bytes_le(bytes: &[u8]) -> Self {
+        // 32 is hard coded/typed in the curve25519_dalek library
+        const BYTES_SIZE: usize = 32;
+        let mut new_bytes: [u8; 32] = [0; BYTES_SIZE];
+        if bytes.len() > BYTES_SIZE {
+            panic!("incorrect number of bytes passed to Curve25519FieldElement: expected {BYTES_SIZE} got {}", bytes.len());
+        }
+        for x in 0..BYTES_SIZE {
+            if x < bytes.len() {
+                new_bytes[x] = bytes[x];
+            }
+        }
+        Self(Scalar::from_bytes_mod_order(new_bytes))
+    }
 }
 
 impl PartialOrd for Curve25519FieldElement {

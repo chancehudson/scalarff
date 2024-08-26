@@ -11,6 +11,8 @@ use std::ops::Sub;
 use std::ops::SubAssign;
 
 use ark_bn254::Fr;
+use ark_ff::biginteger::BigInt;
+use ark_ff::BigInteger;
 use ark_ff::PrimeField;
 use ark_std::str::FromStr;
 use num_bigint::BigUint;
@@ -42,6 +44,19 @@ impl FieldElement for Bn128FieldElement {
 
     fn deserialize(str: &str) -> Self {
         Self(Fr::from_str(str).unwrap())
+    }
+
+    fn to_bytes_le(&self) -> Vec<u8> {
+        const LIMBS: usize = 4;
+        let v: BigInt<LIMBS> = self.0.into_bigint();
+        if v < BigInt::zero() {
+            panic!("arkworks returned a negative value in byte serialization");
+        }
+        v.to_bytes_le()
+    }
+
+    fn from_bytes_le(bytes: &[u8]) -> Self {
+        Self(Fr::from_str(&BigUint::from_bytes_le(bytes).to_string()).unwrap())
     }
 }
 
