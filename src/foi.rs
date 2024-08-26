@@ -20,7 +20,7 @@ pub struct FoiFieldElement(BFieldElement);
 
 impl FieldElement for FoiFieldElement {
     fn name_str() -> &'static str {
-        "0xfoi"
+        "oxfoi"
     }
 
     fn prime() -> num_bigint::BigUint {
