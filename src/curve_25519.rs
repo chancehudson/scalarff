@@ -25,13 +25,6 @@ impl FieldElement for Curve25519FieldElement {
         "curve25519"
     }
 
-    fn prime() -> BigUint {
-        // the modulus returned by this implementation is a hex string
-        // BigUint doesn't like that so we do some nonsense to calculate
-        // the prime
-        BigUint::from_str(&(-Self::one()).to_string()).unwrap() + 1_u32
-    }
-
     fn serialize(&self) -> String {
         self.clone().to_string()
     }

@@ -71,7 +71,12 @@ pub trait FieldElement:
 
     /// The prime modulus of the field as an
     /// arbitrary precision integer.
-    fn prime() -> BigUint;
+    fn prime() -> BigUint {
+        // this is a generic implementation.
+        // Concrete instances may provide
+        // a better/faster implementation
+        (-Self::one()).to_biguint() + 1_u32
+    }
 
     /// A short string identifier for the field.
     fn name_str() -> &'static str;
@@ -116,13 +121,16 @@ pub trait FieldElement:
     /// than the lower 60 bit representation.
     /// This is a lossy representation.
     fn lower60_string(&self) -> String {
-        let two_fifty = BigUint::from(2_u64.pow(60));
+        const POW: u32 = 60;
+        // careful here, if POW is >= 64 we will overflow
+        // the u64 below
+        let two_pow = BigUint::from(/*here ->*/ 2_u64.pow(POW));
         let plain_str = self.serialize();
-        let l50_str = format!("{}_L60", self.to_biguint() % two_fifty);
+        let l60_str = format!("{}_L60", self.to_biguint() % two_pow);
         // add a couple characters so we always print
         // 0xfoi elements as decimal strings
-        if l50_str.len() + 3 < plain_str.len() {
-            l50_str
+        if l60_str.len() + 3 < plain_str.len() {
+            l60_str
         } else {
             plain_str
         }
