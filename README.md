@@ -10,6 +10,10 @@ This library exports a [`FieldElement`](https://docs.rs/scalarff/latest/scalarff
 - `Curve25519FieldElement` - `curve25519` field element [powered by](https://docs.rs/curve25519-dalek/latest/curve25519_dalek/scalar/index.html)
 - `Bn128FieldElement` - `alt_bn128` field element [powered by](https://docs.rs/ark-bn254/0.4.0/ark_bn254/)
 
+## Math
+
+This library is designed to provide easy access to field elements and their corresponding real number representations as `BigUint` instances. This combination is used to implement higher level functions.
+
 See the [1000 residues](https://github.com/chancehudson/scalarff/blob/main/examples/1000_residues.rs) example to get started.
 
 ```js
@@ -24,7 +28,7 @@ finding the next 10 residues in field alt_bn128: starting at 360
     -382_alt_bn128 = 992674259711445781_L60 * 440021912504612076_L60
     -383_alt_bn128 = 867565972486375475_L60 * 565130199729682382_L60
     -384_alt_bn128 = 109351148931867722_L60 * 170423518677343159_L60
-^^^^^^^^^^ function executed in 23 ms ^^^^^^^^^^
+^^^^^^^^^^ function executed in 22 ms ^^^^^^^^^^
 ||||||||||||||||||||||||||||||||||||||||
 finding the next 10 residues in field curve25519: starting at 360
     -361_curve25519 = 19 * 581636266764129242_L60
@@ -39,20 +43,20 @@ finding the next 10 residues in field curve25519: starting at 360
     -377_curve25519 = 1097662937271356306_L60 * 636894834099619931_L60
 ^^^^^^^^^^ function executed in 3 ms ^^^^^^^^^^
 ||||||||||||||||||||||||||||||||||||||||
-finding the next 10 residues in field 0xfoi: starting at 360
-    -360_0xfoi = 4886810760654287587 * 13559933308760296734
-    -361_0xfoi = 19 * 18446744069414584302
-    -363_0xfoi = 3096224742375424 * 18443647844672208897
-    -364_0xfoi = 640366319723949669 * 17806377749690634652
-    -368_0xfoi = 8139125605395827597 * 10307618464018756724
-    -369_0xfoi = 3284662639461963411 * 15162081429952620910
-    -371_0xfoi = 2993791755975720565 * 15452952313438863756
-    -373_0xfoi = 8308875621651992349 * 10137868447762591972
-    -375_0xfoi = 8637146607354536426 * 9809597462060047895
-    -384_0xfoi = 1152912708379604992 * 8791932274689_L60
+finding the next 10 residues in field oxfoi: starting at 360
+    -360_oxfoi = 4886810760654287587 * 13559933308760296734
+    -361_oxfoi = 19 * 18446744069414584302
+    -363_oxfoi = 3096224742375424 * 18443647844672208897
+    -364_oxfoi = 640366319723949669 * 17806377749690634652
+    -368_oxfoi = 8139125605395827597 * 10307618464018756724
+    -369_oxfoi = 3284662639461963411 * 15162081429952620910
+    -371_oxfoi = 2993791755975720565 * 15452952313438863756
+    -373_oxfoi = 8308875621651992349 * 10137868447762591972
+    -375_oxfoi = 8637146607354536426 * 9809597462060047895
+    -384_oxfoi = 1152912708379604992 * 17293831361034979329
 ^^^^^^^^^^ function executed in 3 ms ^^^^^^^^^^
 ||||||||||||||||||||||||||||||||||||||||
-10 quadratic residues in alt_bn128 executed in 23 ms
+10 quadratic residues in alt_bn128 executed in 22 ms
 10 quadratic residues in curve25519 executed in 3 ms
-10 quadratic residues in 0xfoi executed in 3 ms
+10 quadratic residues in oxfoi executed in 3 ms
 ```
