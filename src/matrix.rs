@@ -47,6 +47,45 @@ impl<T: FieldElement> Matrix<T> {
         }
     }
 
+    /// Retrieve a scalar or sub-matrix from the matrix using
+    /// index notation. e.g. v[3][2]
+    pub fn retrieve_indices(&self, indices: &[usize]) -> (Self, usize) {
+        let sum = |vec: &Vec<usize>, start: usize| -> usize {
+            let mut out = 1;
+            for v in &vec[start..] {
+                out *= v;
+            }
+            out
+        };
+        let mut offset = 0;
+        for x in 0..indices.len() {
+            // for each index we sum the deeper dimensions
+            // to determine how far to move in the array storage
+            if x == indices.len() - 1 && indices.len() == self.dimensions.len() {
+                offset += indices[x];
+            } else {
+                offset += indices[x] * sum(&self.dimensions, x + 1);
+            }
+        }
+
+        let mut new_dimensions = vec![];
+        for x in indices.len()..self.dimensions.len() {
+            new_dimensions.push(self.dimensions[x].clone());
+        }
+        let offset_end = if indices.len() == self.dimensions.len() {
+            offset + 1
+        } else {
+            offset + self.dimensions[indices.len()]
+        };
+        (
+            Self {
+                dimensions: new_dimensions,
+                values: self.values[offset..offset_end].to_vec(),
+            },
+            offset,
+        )
+    }
+
     pub fn _assert_internal_consistency(&self) {
         assert_eq!(self.values.len(), self.dimensions.iter().product::<usize>());
     }
