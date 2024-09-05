@@ -50,7 +50,7 @@ impl<T: FieldElement> Matrix<T> {
     /// Retrieve a scalar or sub-matrix from the matrix using
     /// index notation. e.g. v[3][2]
     pub fn retrieve_indices(&self, indices: &[usize]) -> (Self, usize) {
-        let sum = |vec: &Vec<usize>, start: usize| -> usize {
+        let mul_sum = |vec: &Vec<usize>, start: usize| -> usize {
             let mut out = 1;
             for v in &vec[start..] {
                 out *= v;
@@ -64,7 +64,7 @@ impl<T: FieldElement> Matrix<T> {
             if x == indices.len() - 1 && indices.len() == self.dimensions.len() {
                 offset += indices[x];
             } else {
-                offset += indices[x] * sum(&self.dimensions, x + 1);
+                offset += indices[x] * mul_sum(&self.dimensions, x + 1);
             }
         }
 
@@ -75,7 +75,7 @@ impl<T: FieldElement> Matrix<T> {
         let offset_end = if indices.len() == self.dimensions.len() {
             offset + 1
         } else {
-            offset + self.dimensions[indices.len()]
+            offset + mul_sum(&self.dimensions, indices.len())
         };
         (
             Self {
