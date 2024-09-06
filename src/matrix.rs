@@ -17,6 +17,7 @@ use super::FieldElement;
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
 pub struct Matrix<T: FieldElement> {
+    // scalars should be represented as dimensions: vec![1]
     pub dimensions: Vec<usize>,
     pub values: Vec<T>,
 }
@@ -71,6 +72,10 @@ impl<T: FieldElement> Matrix<T> {
         let mut new_dimensions = vec![];
         for x in indices.len()..self.dimensions.len() {
             new_dimensions.push(self.dimensions[x].clone());
+        }
+        // add a dimension to mark as scalar
+        if new_dimensions.len() == 0 {
+            new_dimensions.push(1);
         }
         let offset_end = if indices.len() == self.dimensions.len() {
             offset + 1
