@@ -47,7 +47,7 @@ impl FieldElement for FoiFieldElement {
         const BYTES_SIZE: usize = 16;
         let mut sized_bytes = [0_u8; BYTES_SIZE];
         if bytes.len() > BYTES_SIZE {
-            panic!("incorrect number of bytes passed to Curve25519FieldElement: expected {BYTES_SIZE} got {}", bytes.len());
+            panic!("incorrect number of bytes passed to foi_slow::FoiFieldElement: expected at most {BYTES_SIZE} got {}", bytes.len());
         }
         for x in 0..BYTES_SIZE {
             if x < bytes.len() {
