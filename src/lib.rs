@@ -20,13 +20,20 @@ use num_integer::Integer;
 
 pub mod alt_bn128;
 pub mod curve_25519;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod foi;
+#[cfg(target_arch = "wasm32")]
+pub mod foi_slow;
+
 pub mod matrix;
 pub mod timing;
 
 pub use alt_bn128::Bn128FieldElement;
 pub use curve_25519::Curve25519FieldElement;
+#[cfg(not(target_arch = "wasm32"))]
 pub use foi::FoiFieldElement;
+#[cfg(target_arch = "wasm32")]
+pub use foi_slow::FoiFieldElement;
 pub use num_bigint::BigUint;
 
 /// A generic representation of a scalar finite field element.
