@@ -22,7 +22,6 @@ pub mod alt_bn128;
 pub mod curve_25519;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod foi;
-#[cfg(target_arch = "wasm32")]
 pub mod foi_slow;
 
 pub mod matrix;
@@ -254,7 +253,6 @@ mod tests {
     use super::*;
     use alt_bn128::Bn128FieldElement;
     use curve_25519::Curve25519FieldElement;
-    use foi::FoiFieldElement;
 
     fn test_sqrt<T: FieldElement>() {
         let mut x = T::one();
@@ -267,8 +265,13 @@ mod tests {
     }
 
     #[test]
+    fn sqrt_foi_slow() {
+        test_sqrt::<foi_slow::FoiFieldElement>();
+    }
+
+    #[test]
     fn sqrt_foi() {
-        test_sqrt::<FoiFieldElement>();
+        test_sqrt::<foi::FoiFieldElement>();
     }
 
     #[test]

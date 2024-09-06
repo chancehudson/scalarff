@@ -20,27 +20,6 @@ impl FoiFieldElement {
     pub fn prime_u128() -> u128 {
         18446744069414584321
     }
-
-    pub fn modinv(v: u128) -> u128 {
-        let mut v = v % Self::prime_u128();
-        if v == 0 {
-            panic!("divide by zero");
-        }
-        let mut y = 0_u128;
-        let mut x = 1_u128;
-        let mut f = Self::prime_u128();
-        let m = Self::prime_u128();
-        while v > 1 {
-            let q = v / f;
-            let mut t = f;
-            f = v % f;
-            v = t;
-            t = y;
-            y = x - q * y;
-            x = t;
-        }
-        return x % m;
-    }
 }
 
 impl FieldElement for FoiFieldElement {
@@ -127,7 +106,12 @@ impl Div for FoiFieldElement {
     type Output = Self;
 
     fn div(self, other: Self) -> Self {
-        FoiFieldElement((self.0 * Self::modinv(other.0)) % Self::prime_u128())
+        let other_inv = other.to_biguint().modinv(&Self::prime());
+        if let Some(inv) = other_inv {
+            FoiFieldElement((self.0 * u128::try_from(inv).unwrap()) % Self::prime_u128())
+        } else {
+            panic!("Division by zero");
+        }
     }
 }
 
@@ -153,6 +137,6 @@ impl Neg for FoiFieldElement {
     type Output = Self;
 
     fn neg(self) -> Self {
-        FoiFieldElement(((self.0 + Self::prime_u128()) - self.0) % Self::prime_u128())
+        FoiFieldElement((Self::prime_u128() - self.0) % Self::prime_u128())
     }
 }
