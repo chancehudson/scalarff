@@ -69,7 +69,17 @@ impl FromStr for Curve25519FieldElement {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Curve25519FieldElement(Scalar::from_str_vartime(s).unwrap()))
+        // The curve25519_dalek implementation of from_str_vartime
+        // does not accept leading zeroes. In the other implementations we _do_
+        // accept leading zeroes so we sanitize the string here as needed
+        let trimmed = s.trim_start_matches('0');
+        if trimmed.is_empty() {
+            Ok(Self::zero())
+        } else {
+            Ok(Curve25519FieldElement(
+                Scalar::from_str_vartime(trimmed).unwrap(),
+            ))
+        }
     }
 }
 
