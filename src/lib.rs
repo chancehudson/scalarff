@@ -1,7 +1,14 @@
 //! A minimal, opinionated, library for working with scalar finite fields.
+//!
 //! Curated scalar finite field implementations from the best cryptography libraries.
 //! Provides a `FieldElement` trait for working with residues, and a `to_biguint`
-//! method for arbitrary precision operations.
+//! method for arbitrary precision operations on the real representations of field elements.
+//!
+//! By default this library does not include any field implementations. Manually
+//! enable support for fields by enabling the corresponding feature below:
+//!   - `alt_bn128` - (aka Bn254)
+//!   - `curve25519`
+//!   - `oxfoi` - (aka goldilocks)
 //!
 use std::fmt::Debug;
 use std::fmt::Display;
@@ -18,26 +25,31 @@ use std::str::FromStr;
 
 use num_integer::Integer;
 
+#[cfg(feature = "alt_bn128")]
 pub mod alt_bn128;
+#[cfg(feature = "curve25519")]
 pub mod curve_25519;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(feature = "oxfoi", not(target_arch = "wasm32")))]
 pub mod foi;
+#[cfg(feature = "oxfoi")]
 pub mod foi_slow;
 
 pub mod matrix;
 pub mod timing;
 
+#[cfg(feature = "alt_bn128")]
 pub use alt_bn128::Bn128FieldElement;
+#[cfg(feature = "curve25519")]
 pub use curve_25519::Curve25519FieldElement;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(feature = "oxfoi", not(target_arch = "wasm32")))]
 pub use foi::FoiFieldElement;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(feature = "oxfoi", target_arch = "wasm32"))]
 pub use foi_slow::FoiFieldElement;
 pub use num_bigint::BigUint;
 
 /// A generic representation of a scalar finite field element.
 /// For use in internal module logic. Supports field operations
-/// using builting operators (*-+/) and other convenience traits.
+/// using builtin operators (*-+/) and other convenience traits.
 /// Handles serialization and deserialization to a reasonable
 /// string representation.
 pub trait FieldElement:
@@ -251,8 +263,6 @@ pub trait FieldElement:
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alt_bn128::Bn128FieldElement;
-    use curve_25519::Curve25519FieldElement;
 
     fn test_sqrt<T: FieldElement>() {
         let mut x = T::one();
@@ -269,6 +279,7 @@ mod tests {
         test_sqrt::<foi_slow::FoiFieldElement>();
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     #[test]
     fn sqrt_foi() {
         test_sqrt::<foi::FoiFieldElement>();
@@ -276,11 +287,11 @@ mod tests {
 
     #[test]
     fn sqrt_bn128() {
-        test_sqrt::<Bn128FieldElement>();
+        test_sqrt::<alt_bn128::Bn128FieldElement>();
     }
 
     #[test]
     fn sqrt_curve25519() {
-        test_sqrt::<Curve25519FieldElement>();
+        test_sqrt::<curve_25519::Curve25519FieldElement>();
     }
 }

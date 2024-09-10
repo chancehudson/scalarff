@@ -1,11 +1,11 @@
 use colored::Colorize;
 
-use scalarff::alt_bn128::Bn128FieldElement;
-use scalarff::curve_25519::Curve25519FieldElement;
-use scalarff::foi::FoiFieldElement;
 use scalarff::timing::stat_exec;
 use scalarff::timing::summary_exec;
+use scalarff::Bn128FieldElement;
+use scalarff::Curve25519FieldElement;
 use scalarff::FieldElement;
+use scalarff::FoiFieldElement;
 
 fn main() {
     // calculate the next {count} square roots in a field

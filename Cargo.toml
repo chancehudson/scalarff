@@ -1,6 +1,6 @@
 [package]
 name = "scalarff"
-version = "0.3.2"
+version = "0.4.0"
 edition = "2021"
 authors = ["Chance Hudson <PSE>"]
 description = "A minimal, opinionated, library for working with scalar finite fields."
@@ -11,19 +11,34 @@ license = "MIT OR Apache-2.0"
 [lib]
 name = "scalarff"
 
+[features]
+default = []
+
+curve25519 = ["curve25519-dalek", "ff"]
+alt_bn128 = ["ark-bn254", "ark-ff", "ark-std"]
+oxfoi = ["twenty-first"]
+
 [dependencies]
-anyhow = "1.0.86"
 num-bigint = "0.4.6"
 num-integer = "0.1.46"
 colored = "2.1.0"
-ark-ff = "=0.4.1"
-ark-bn254 = "0.4.0"
-ark-std = "0.4.0"
-curve25519-dalek = { version = "4.1.3", features = ["group"] }
-ff = "0.13.0"
 
+# curve25519
+curve25519-dalek = { version = "4.1.3", optional = true, features = ["group"] }
+ff = { version = "0.13.0", optional = true }
+
+# alt_bn128
+ark-bn254 = { version = "0.4.0", optional = true }
+ark-std = { version = "0.4.0", optional = true }
+ark-ff = { version = "0.4.1", optional = true }
+
+# oxfoi
+
+# the twenty-first crate is not wasm32 compatible
+# to solve this we provide a simple implementation based
+# on the u64/u128 type
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-twenty-first = { version = "0.41.0" }
+twenty-first = { version = "0.41.0", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 

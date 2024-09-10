@@ -42,7 +42,7 @@ jobs:
       - run: *build_version_stable
       - run:
           name: Clippy
-          command: cargo clippy
+          command: cargo clippy --features=oxfoi,alt_bn128,curve25519
   lint:
     machine:
       image: ubuntu-2204:current
@@ -62,11 +62,11 @@ jobs:
       - checkout
       - run: *rust_version
       - run:
-          name: Build
-          command: cargo build
-      - run:
           name: Test
-          command: cargo test
+          command: cargo test --release --features=oxfoi,curve25519,alt_bn128
+      - run:
+          name: Build wasm32
+          command: cargo build --target=wasm32-unknown-unknown --features=oxfoi,curve25519,alt_bn128
 
   example-residues:
     parameters:
