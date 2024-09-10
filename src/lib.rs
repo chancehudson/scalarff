@@ -25,6 +25,9 @@ use std::str::FromStr;
 
 use num_integer::Integer;
 
+#[macro_use]
+mod custom;
+
 #[cfg(feature = "alt_bn128")]
 pub mod alt_bn128;
 #[cfg(feature = "curve25519")]
