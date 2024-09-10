@@ -23,6 +23,7 @@ step_defs:
         rustup update << parameters.rust-version >>
         rustup default << parameters.rust-version >>
         rustup component add clippy
+        rustup target add wasm32-unknown-unknown
   - run: &build_version_stable
       name: Set Rust version
       command: |
@@ -32,6 +33,7 @@ step_defs:
         rustup update stable
         rustup default stable
         rustup component add clippy
+        rustup target add wasm32-unknown-unknown
 
 jobs:
   clippy:
@@ -82,4 +84,4 @@ jobs:
           command: cargo build --release
       - run:
           name: Run example
-          command: cargo run --example 1000_residues --release
+          command: cargo run --example 1000_residues --release --features=oxfoi,alt_bn128,curve25519
