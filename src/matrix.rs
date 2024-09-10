@@ -71,10 +71,10 @@ impl<T: FieldElement> Matrix<T> {
 
         let mut new_dimensions = vec![];
         for x in indices.len()..self.dimensions.len() {
-            new_dimensions.push(self.dimensions[x].clone());
+            new_dimensions.push(self.dimensions[x]);
         }
         // add a dimension to mark as scalar
-        if new_dimensions.len() == 0 {
+        if new_dimensions.is_empty() {
             new_dimensions.push(1);
         }
         let offset_end = if indices.len() == self.dimensions.len() {

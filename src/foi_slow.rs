@@ -74,7 +74,7 @@ impl FromStr for FoiFieldElement {
 
 impl From<u64> for FoiFieldElement {
     fn from(value: u64) -> Self {
-        FoiFieldElement(u128::try_from(value).unwrap())
+        FoiFieldElement(u128::from(value))
     }
 }
 
