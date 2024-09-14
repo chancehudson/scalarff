@@ -58,13 +58,13 @@ macro_rules! custom_ring {
             type Err = ();
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                Ok($name(s.parse::<u128>().unwrap()))
+                Ok($name(s.parse::<u128>().unwrap() % $modulus))
             }
         }
 
         impl From<u64> for $name {
             fn from(value: u64) -> Self {
-                $name(u128::from(value))
+                $name(u128::from(value) % $modulus)
             }
         }
 
