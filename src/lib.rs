@@ -277,7 +277,7 @@ mod tests {
         }
     }
 
-    custom_ring!(F13FieldElement, 13);
+    custom_ring!(F13FieldElement, 13, "f13");
 
     #[test]
     fn sqrt_custom_ring() {

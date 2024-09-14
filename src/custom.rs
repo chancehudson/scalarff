@@ -5,8 +5,8 @@
 /// is prime.
 #[macro_export]
 macro_rules! custom_ring {
-    ( $name: ident, $modulus: literal ) => {
-        /// A field element in a field with a custom modulus
+    ( $name: ident, $modulus: literal, $name_str: expr ) => {
+        /// An element in a ring with a custom modulus
         /// this modulus must be < 2^64 so we can do modular
         /// multiplication using the u128 type.
         #[derive(std::fmt::Debug, Clone, Copy, PartialEq, Eq, std::hash::Hash)]
@@ -14,7 +14,7 @@ macro_rules! custom_ring {
 
         impl FieldElement for $name {
             fn name_str() -> &'static str {
-                stringify!($name)
+                $name_str
             }
 
             fn zero() -> Self {
@@ -137,11 +137,11 @@ mod tests {
 
     // define a field element in f13 (finite field with 13 elements)
     // do some tests on it
-    custom_ring!(F13FieldElement, 13_u128);
+    custom_ring!(F13FieldElement, 13_u128, "f13");
 
     #[test]
     fn str_name() {
-        assert_eq!(F13FieldElement::name_str(), "F13FieldElement");
+        assert_eq!(F13FieldElement::name_str(), "f13");
     }
 
     #[test]
