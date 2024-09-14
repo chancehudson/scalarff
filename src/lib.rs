@@ -4,11 +4,23 @@
 //! Provides a `FieldElement` trait for working with residues, and a `to_biguint`
 //! method for arbitrary precision operations on the real representations of field elements.
 //!
+//! This library makes no guarantees about the timing of underlying field operations. **This
+//! library should be considered vulnerable to timing attacks.**
+//!
 //! By default this library does not include any field implementations. Manually
 //! enable support for fields by enabling the corresponding feature below:
 //!   - `alt_bn128` - (aka Bn254)
 //!   - `curve25519`
 //!   - `oxfoi` - (aka goldilocks)
+//!
+//! Example usage:
+//! ```rust
+//! use scalarff::FieldElement; // Bring the trait in scope
+//! // Import 1 or more concrete instances
+//! use scalarff::Bn128FieldElement;
+//! use scalarff::Curve25519FieldElement;
+//! use scalarff::FoiFieldElement;
+//! ```
 //!
 use std::fmt::Debug;
 use std::fmt::Display;
@@ -24,6 +36,9 @@ use std::ops::SubAssign;
 use std::str::FromStr;
 
 use num_integer::Integer;
+
+#[macro_use]
+mod custom;
 
 #[cfg(feature = "alt_bn128")]
 pub mod alt_bn128;
@@ -272,6 +287,13 @@ mod tests {
             assert_eq!(square, root.clone() * root.clone());
             x += T::one();
         }
+    }
+
+    custom_ring!(F13FieldElement, 13, "f13");
+
+    #[test]
+    fn sqrt_custom_ring() {
+        test_sqrt::<F13FieldElement>();
     }
 
     #[test]
