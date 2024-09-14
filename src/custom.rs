@@ -3,6 +3,8 @@
 /// This function creates a commutative ring with the provided
 /// modulus. This ring may be considered a field if the modulus
 /// is prime.
+///
+/// This macro is intended for testing and educational purposes.
 #[macro_export]
 macro_rules! custom_ring {
     ( $name: ident, $modulus: literal, $name_str: expr ) => {

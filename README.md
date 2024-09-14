@@ -10,6 +10,21 @@ This library exports a [`FieldElement`](https://docs.rs/scalarff/latest/scalarff
 - `Curve25519FieldElement` - `curve25519` field element [powered by](https://docs.rs/curve25519-dalek/latest/curve25519_dalek/scalar/index.html)
 - `Bn128FieldElement` - `alt_bn128` field element [powered by](https://docs.rs/ark-bn254/0.4.0/ark_bn254/)
 
+```rust
+use scalarff::FieldElement; // Bring the trait in scope
+// Import 1 or more concrete instances
+use scalarff::Bn128FieldElement;
+use scalarff::Curve25519FieldElement;
+use scalarff::FoiFieldElement;
+
+// later in a function
+{
+    let x = Curve25519FieldElement::from(100_u64);
+    let y = Curve25519FieldElement::from(200_u64);
+    let z = x * y; // multiplication with modular reduction
+}
+```
+
 ## Math
 
 This library is designed to provide easy access to field elements and their corresponding real number representations as `BigUint` instances. This combination is used to implement higher level functions.
