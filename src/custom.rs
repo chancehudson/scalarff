@@ -14,7 +14,7 @@ macro_rules! custom_ring {
 
         impl FieldElement for $name {
             fn name_str() -> &'static str {
-                "CustomFieldElement"
+                stringify!($name)
             }
 
             fn zero() -> Self {
@@ -139,19 +139,9 @@ mod tests {
     // do some tests on it
     custom_ring!(F13FieldElement, 13_u128);
 
-    fn test_sqrt<T: FieldElement>() {
-        let mut x = T::one();
-        for _ in 0..1000 {
-            let square = x.clone() * x.clone();
-            let root = square.sqrt();
-            assert_eq!(square, root.clone() * root.clone());
-            x += T::one();
-        }
-    }
-
     #[test]
-    fn sqrt() {
-        test_sqrt::<F13FieldElement>();
+    fn str_name() {
+        assert_eq!(F13FieldElement::name_str(), "F13FieldElement");
     }
 
     #[test]

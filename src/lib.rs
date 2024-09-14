@@ -277,6 +277,13 @@ mod tests {
         }
     }
 
+    custom_ring!(F13FieldElement, 13);
+
+    #[test]
+    fn sqrt_custom_ring() {
+        test_sqrt::<F13FieldElement>();
+    }
+
     #[test]
     fn sqrt_foi_slow() {
         test_sqrt::<foi_slow::FoiFieldElement>();
