@@ -14,10 +14,14 @@
 //!   - `oxfoi` - (aka goldilocks)
 //!
 //! Example usage:
+//! ```toml
+//! [dependencies]
+//! scalarff = { version = "0.4.1", features = ["curve25519", "oxfoi"] }
+//! ```
+//!
 //! ```rust
 //! use scalarff::FieldElement; // Bring the trait in scope
 //! // Import 1 or more concrete instances
-//! use scalarff::Bn128FieldElement;
 //! use scalarff::Curve25519FieldElement;
 //! use scalarff::FoiFieldElement;
 //! ```

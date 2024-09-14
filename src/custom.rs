@@ -1,8 +1,8 @@
-/// Expects FieldElement to be in scope
-/// The provided `modulus` should be a number < 2^64.
+/// The provided `modulus` should be a number `< 2^64`.
 /// This function creates a commutative ring with the provided
 /// modulus. This ring may be considered a field if the modulus
 /// is prime.
+/// Expects `FieldElement` to be in scope
 ///
 /// This macro is intended for testing and educational purposes.
 #[macro_export]
