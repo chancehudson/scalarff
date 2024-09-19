@@ -31,6 +31,10 @@ impl FieldElement for Bn128FieldElement {
         Fr::MODULUS.into()
     }
 
+    fn byte_len() -> usize {
+        32
+    }
+
     // why does arkworks serialize 0 to an empty string?
     // why would you do that?
     fn serialize(&self) -> String {

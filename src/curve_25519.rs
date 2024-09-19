@@ -33,6 +33,10 @@ impl FieldElement for Curve25519FieldElement {
         Self::from_str(str).unwrap()
     }
 
+    fn byte_len() -> usize {
+        32
+    }
+
     fn to_bytes_le(&self) -> Vec<u8> {
         self.0.to_bytes().to_vec()
     }
@@ -40,7 +44,7 @@ impl FieldElement for Curve25519FieldElement {
     fn from_bytes_le(bytes: &[u8]) -> Self {
         // 32 is hard coded/typed in the curve25519_dalek library
         const BYTES_SIZE: usize = 32;
-        let mut new_bytes: [u8; 32] = [0; BYTES_SIZE];
+        let mut new_bytes: [u8; BYTES_SIZE] = [0; BYTES_SIZE];
         if bytes.len() > BYTES_SIZE {
             panic!("incorrect number of bytes passed to Curve25519FieldElement: expected {BYTES_SIZE} got {}", bytes.len());
         }

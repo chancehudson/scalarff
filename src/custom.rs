@@ -27,6 +27,10 @@ macro_rules! custom_ring {
                 $name(1)
             }
 
+            fn byte_len() -> usize {
+                8
+            }
+
             fn serialize(&self) -> String {
                 self.0.to_string()
             }
@@ -44,7 +48,7 @@ macro_rules! custom_ring {
                 if bytes.len() < 16 {
                     padded_bytes.resize(16, 0);
                 }
-                $name(u128::from_le_bytes(padded_bytes.try_into().unwrap()))
+                $name(u128::from_le_bytes(padded_bytes.try_into().unwrap()) % $modulus)
             }
         }
 

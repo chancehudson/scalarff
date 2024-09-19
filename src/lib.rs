@@ -98,6 +98,21 @@ pub trait FieldElement:
         Self::from(1)
     }
 
+    /// Minimum number of bytes needed to represent
+    /// an element.
+    fn byte_len() -> usize;
+
+    /// Sample a random element from the field using a supplied
+    /// source of randomness. Requires the `random` feature to be enabled.
+    #[cfg(feature = "random")]
+    fn sample_rand<R: rand::Rng>(src: &mut R) -> Self {
+        let bytes = vec![0; Self::byte_len()]
+            .iter()
+            .map(|_| src.gen_range(0..=255))
+            .collect::<Vec<_>>();
+        Self::from_bytes_le(&bytes)
+    }
+
     /// Get a valid string representation
     /// of the element.
     fn serialize(&self) -> String;

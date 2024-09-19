@@ -2,6 +2,9 @@
 //! sets of `FieldElement`. Matrices can be 1 dimensional
 //! for representing vectors.
 //!
+//! This matrix implementation is designed to represent matrices
+//! of variable dimension.
+//!
 use std::fmt::Display;
 use std::ops::Add;
 use std::ops::AddAssign;

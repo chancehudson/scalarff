@@ -19,6 +19,10 @@ use super::FieldElement;
 pub struct FoiFieldElement(BFieldElement);
 
 impl FieldElement for FoiFieldElement {
+    fn byte_len() -> usize {
+        8
+    }
+
     fn name_str() -> &'static str {
         "oxfoi"
     }
