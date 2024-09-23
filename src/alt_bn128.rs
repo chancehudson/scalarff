@@ -18,11 +18,14 @@ use ark_std::str::FromStr;
 use num_bigint::BigUint;
 
 use super::FieldElement;
+use super::RingElement;
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Bn128FieldElement(Fr);
 
-impl FieldElement for Bn128FieldElement {
+impl FieldElement for Bn128FieldElement {}
+
+impl RingElement for Bn128FieldElement {
     fn name_str() -> &'static str {
         "alt_bn128"
     }
@@ -33,6 +36,10 @@ impl FieldElement for Bn128FieldElement {
 
     fn byte_len() -> usize {
         32
+    }
+
+    fn inv(&self) -> anyhow::Result<Self> {
+        Ok(Self(Fr::from(1) / self.0))
     }
 
     // why does arkworks serialize 0 to an empty string?

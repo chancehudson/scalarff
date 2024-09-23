@@ -14,11 +14,14 @@ use std::str::FromStr;
 use twenty_first::math::b_field_element::BFieldElement;
 
 use super::FieldElement;
+use super::RingElement;
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub struct FoiFieldElement(BFieldElement);
 
-impl FieldElement for FoiFieldElement {
+impl FieldElement for FoiFieldElement {}
+
+impl RingElement for FoiFieldElement {
     fn byte_len() -> usize {
         8
     }
@@ -29,6 +32,10 @@ impl FieldElement for FoiFieldElement {
 
     fn prime() -> num_bigint::BigUint {
         num_bigint::BigUint::from(BFieldElement::P)
+    }
+
+    fn inv(&self) -> anyhow::Result<Self> {
+        Ok(Self(BFieldElement::from(1) / self.0))
     }
 
     fn serialize(&self) -> String {

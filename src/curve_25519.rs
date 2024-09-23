@@ -16,13 +16,20 @@ use ff::PrimeField;
 use num_bigint::BigUint;
 
 use super::FieldElement;
+use super::RingElement;
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Curve25519FieldElement(Scalar);
 
-impl FieldElement for Curve25519FieldElement {
+impl FieldElement for Curve25519FieldElement {}
+
+impl RingElement for Curve25519FieldElement {
     fn name_str() -> &'static str {
         "curve25519"
+    }
+
+    fn inv(&self) -> anyhow::Result<Self> {
+        Ok(Self(self.0.invert()))
     }
 
     fn serialize(&self) -> String {

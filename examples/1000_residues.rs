@@ -6,6 +6,7 @@ use scalarff::Bn128FieldElement;
 use scalarff::Curve25519FieldElement;
 use scalarff::FieldElement;
 use scalarff::FoiFieldElement;
+use scalarff::RingElement;
 
 fn main() {
     // calculate the next {count} square roots in a field

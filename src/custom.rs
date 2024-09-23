@@ -14,9 +14,18 @@ macro_rules! custom_ring {
         #[derive(std::fmt::Debug, Clone, Copy, PartialEq, Eq, std::hash::Hash)]
         pub struct $name(u128);
 
-        impl FieldElement for $name {
+        impl RingElement for $name {
             fn name_str() -> &'static str {
                 $name_str
+            }
+
+            fn inv(&self) -> anyhow::Result<Self> {
+                let inverse = self.to_biguint().modinv(&Self::prime());
+                if inverse.is_none() {
+                    anyhow::bail!("Inverse not found for element in {}", Self::name_str());
+                }
+                let inverse = inverse.unwrap();
+                Ok(Self::from_biguint(&inverse))
             }
 
             fn zero() -> Self {
@@ -28,7 +37,7 @@ macro_rules! custom_ring {
             }
 
             fn byte_len() -> usize {
-                8
+                (($modulus as u64).ilog2() as usize) + 1_usize
             }
 
             fn serialize(&self) -> String {
@@ -96,19 +105,6 @@ macro_rules! custom_ring {
             }
         }
 
-        impl std::ops::Div for $name {
-            type Output = Self;
-
-            fn div(self, other: Self) -> Self {
-                let other_inv = other.to_biguint().modinv(&Self::prime());
-                if let Some(inv) = other_inv {
-                    $name((self.0 * u128::try_from(inv).unwrap()) % $modulus)
-                } else {
-                    panic!("Division by zero");
-                }
-            }
-        }
-
         impl std::ops::AddAssign for $name {
             fn add_assign(&mut self, other: Self) {
                 *self = *self + other;
@@ -140,10 +136,21 @@ macro_rules! custom_ring {
 #[cfg(test)]
 mod tests {
     use crate::FieldElement;
+    use crate::RingElement;
 
     // define a field element in f13 (finite field with 13 elements)
     // do some tests on it
     custom_ring!(F13FieldElement, 13_u128, "f13");
+
+    impl FieldElement for F13FieldElement {}
+
+    impl std::ops::Div for F13FieldElement {
+        type Output = Self;
+
+        fn div(self, other: Self) -> Self {
+            self * other.inv().unwrap()
+        }
+    }
 
     #[test]
     fn str_name() {
