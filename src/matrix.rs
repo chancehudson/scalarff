@@ -1,5 +1,5 @@
 //! A vector/matrix structure for doing arithmetic on
-//! sets of `FieldElement`. Matrices can be 1 dimensional
+//! sets of `RingElement`. Matrices can be 1 dimensional
 //! for representing vectors.
 //!
 //! This matrix implementation is designed to represent matrices
@@ -16,16 +16,16 @@ use std::ops::Sub;
 use std::ops::SubAssign;
 use std::str::FromStr;
 
-use super::FieldElement;
+use crate::RingElement;
 
 #[derive(Debug, Clone, PartialEq, Hash, Eq)]
-pub struct Matrix<T: FieldElement> {
+pub struct Matrix<T: RingElement> {
     // scalars should be represented as dimensions: vec![1]
     pub dimensions: Vec<usize>,
     pub values: Vec<T>,
 }
 
-impl<T: FieldElement> Matrix<T> {
+impl<T: RingElement> Matrix<T> {
     pub fn len(&self) -> usize {
         self.values.len()
     }
@@ -43,12 +43,17 @@ impl<T: FieldElement> Matrix<T> {
         }
     }
 
-    pub fn invert(&self) -> Self {
-        let values = self.values.iter().map(|x| T::one() / x.clone()).collect();
-        Matrix {
+    /// Compute modular inverse of all elements
+    pub fn invert(&self) -> anyhow::Result<Self> {
+        let values = self
+            .values
+            .iter()
+            .map(|x| x.inv())
+            .collect::<anyhow::Result<Vec<_>>>()?;
+        Ok(Matrix {
             dimensions: self.dimensions.clone(),
             values,
-        }
+        })
     }
 
     /// Retrieve a scalar or sub-matrix from the matrix using
@@ -113,7 +118,7 @@ impl<T: FieldElement> Matrix<T> {
     }
 }
 
-impl<T: FieldElement> Add for Matrix<T> {
+impl<T: RingElement> Add for Matrix<T> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
@@ -131,7 +136,7 @@ impl<T: FieldElement> Add for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> AddAssign for Matrix<T> {
+impl<T: RingElement> AddAssign for Matrix<T> {
     fn add_assign(&mut self, other: Self) {
         self.assert_eq_shape(&other);
         for i in 0..self.values.len() {
@@ -140,7 +145,7 @@ impl<T: FieldElement> AddAssign for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> Sub for Matrix<T> {
+impl<T: RingElement> Sub for Matrix<T> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
@@ -158,7 +163,7 @@ impl<T: FieldElement> Sub for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> SubAssign for Matrix<T> {
+impl<T: RingElement> SubAssign for Matrix<T> {
     fn sub_assign(&mut self, other: Self) {
         self.assert_eq_shape(&other);
         for i in 0..self.values.len() {
@@ -167,7 +172,7 @@ impl<T: FieldElement> SubAssign for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> Mul for Matrix<T> {
+impl<T: RingElement> Mul for Matrix<T> {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
@@ -185,7 +190,7 @@ impl<T: FieldElement> Mul for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> MulAssign for Matrix<T> {
+impl<T: RingElement> MulAssign for Matrix<T> {
     fn mul_assign(&mut self, other: Self) {
         self.assert_eq_shape(&other);
         for i in 0..self.values.len() {
@@ -194,16 +199,18 @@ impl<T: FieldElement> MulAssign for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> Div for Matrix<T> {
+impl<T: RingElement> Div for Matrix<T> {
     type Output = Self;
 
+    /// Warning: this function will panic if the divisor
+    /// is not invertible in the ring.
     fn div(self, other: Self) -> Self {
         self.assert_eq_shape(&other);
         let values = self
             .values
             .iter()
             .zip(other.values.iter())
-            .map(|(a, b)| a.clone() / b.clone())
+            .map(|(a, b)| a.clone() * b.inv().unwrap())
             .collect();
         Matrix {
             dimensions: self.dimensions,
@@ -212,7 +219,7 @@ impl<T: FieldElement> Div for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> Neg for Matrix<T> {
+impl<T: RingElement> Neg for Matrix<T> {
     type Output = Self;
 
     fn neg(self) -> Self {
@@ -224,7 +231,7 @@ impl<T: FieldElement> Neg for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> From<T> for Matrix<T> {
+impl<T: RingElement> From<T> for Matrix<T> {
     fn from(v: T) -> Self {
         Matrix {
             dimensions: vec![1],
@@ -233,13 +240,13 @@ impl<T: FieldElement> From<T> for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> From<u64> for Matrix<T> {
+impl<T: RingElement> From<u64> for Matrix<T> {
     fn from(v: u64) -> Self {
         Matrix::from(T::from(v))
     }
 }
 
-impl<T: FieldElement> FromStr for Matrix<T> {
+impl<T: RingElement> FromStr for Matrix<T> {
     type Err = T::Err;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -247,7 +254,7 @@ impl<T: FieldElement> FromStr for Matrix<T> {
     }
 }
 
-impl<T: FieldElement> Display for Matrix<T> {
+impl<T: RingElement> Display for Matrix<T> {
     // TODO: pretty print the matrix
     fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
         let mut s = String::new();

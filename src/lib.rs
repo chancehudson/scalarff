@@ -39,6 +39,7 @@ use std::ops::Sub;
 use std::ops::SubAssign;
 use std::str::FromStr;
 
+use anyhow::Result;
 use num_integer::Integer;
 
 #[macro_use]
@@ -66,15 +67,100 @@ pub use foi::FoiFieldElement;
 pub use foi_slow::FoiFieldElement;
 pub use num_bigint::BigUint;
 
+/// A FieldElement is an extension of a RingElement with an
+/// infallible inversion operation.
+pub trait FieldElement: RingElement + Div<Output = Self> {
+    /// Calculate the [legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol#Definition)
+    /// for a field element. Used to determine if the
+    /// element is a quadratic residue.
+    fn legendre(&self) -> i32 {
+        if self == &Self::zero() {
+            return 0;
+        }
+        let neg_one = Self::prime() - 1_u32;
+        let one = BigUint::from(1_u32);
+        let e = (-Self::one()) / (Self::one() + Self::one());
+        let e_bigint = BigUint::from_str(&e.serialize()).unwrap();
+        let a = BigUint::from_str(&self.serialize()).unwrap();
+        let l = a.modpow(&e_bigint, &Self::prime());
+        if l == neg_one {
+            -1
+        } else if l == one {
+            return 1;
+        } else {
+            panic!("legendre symbol is not 1, -1, or 0");
+        }
+    }
+
+    /// [Kumar 08](https://arxiv.org/pdf/2008.11814v4) prime field square root implementation.
+    /// Always returns the smaller root e.g. the positive root.
+    fn sqrt(&self) -> Self {
+        if self == &Self::zero() {
+            return Self::zero();
+        }
+        if self.legendre() != 1 {
+            panic!("legendre symbol is not 1: root does not exist or input is 0");
+        }
+        // find a non-residue
+        let mut x = Self::one() + Self::one();
+        let non_residue;
+        loop {
+            if x.legendre() == -1 {
+                non_residue = x.clone();
+                break;
+            }
+            x += Self::one();
+        }
+        let b = BigUint::from_str(&non_residue.serialize()).unwrap();
+
+        let a = BigUint::from_str(&self.serialize()).unwrap();
+        let two = Self::one() + Self::one();
+        let m = (-Self::one()) / two.clone();
+        let mut apow = -Self::one();
+        let mut bpow = Self::zero();
+        while BigUint::from_str(&apow.serialize()).unwrap().is_even() {
+            apow = apow / two.clone();
+            bpow = bpow / two.clone();
+            let a_ = a.modpow(
+                &BigUint::from_str(&apow.serialize()).unwrap(),
+                &Self::prime(),
+            );
+            let b_ = b.modpow(
+                &BigUint::from_str(&bpow.serialize()).unwrap(),
+                &Self::prime(),
+            );
+            if (a_ * b_) % Self::prime() == Self::prime() - 1_u32 {
+                bpow += m.clone();
+            }
+        }
+        apow = (apow + Self::one()) / two.clone();
+        bpow = bpow / two;
+        let a_ = a.modpow(
+            &BigUint::from_str(&apow.serialize()).unwrap(),
+            &Self::prime(),
+        );
+        let b_ = b.modpow(
+            &BigUint::from_str(&bpow.serialize()).unwrap(),
+            &Self::prime(),
+        );
+        let root = (a_ * b_) % Self::prime();
+        let other_root = Self::prime() - root.clone();
+        if root > other_root {
+            Self::from_biguint(&other_root)
+        } else {
+            Self::from_biguint(&root)
+        }
+    }
+}
+
 /// A generic representation of a scalar finite field element.
 /// For use in internal module logic. Supports field operations
 /// using builtin operators (*-+/) and other convenience traits.
 /// Handles serialization and deserialization to a reasonable
 /// string representation.
-pub trait FieldElement:
+pub trait RingElement:
     Add<Output = Self>
     + AddAssign
-    + Div<Output = Self>
     + Mul<Output = Self>
     + MulAssign
     + Neg<Output = Self>
@@ -97,6 +183,10 @@ pub trait FieldElement:
     fn one() -> Self {
         Self::from(1)
     }
+
+    /// Calculate a modular inverse. If an inverse
+    /// does not exist return an error
+    fn inv(&self) -> Result<Self>;
 
     /// Minimum number of bytes needed to represent
     /// an element.
@@ -210,88 +300,6 @@ pub trait FieldElement:
         }
         unreachable!();
     }
-
-    /// Calculate the [legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol#Definition)
-    /// for a field element. Used to determine if the
-    /// element is a quadratic residue.
-    fn legendre(&self) -> i32 {
-        if self == &Self::zero() {
-            return 0;
-        }
-        let neg_one = Self::prime() - 1_u32;
-        let one = BigUint::from(1_u32);
-        let e = (-Self::one()) / (Self::one() + Self::one());
-        let e_bigint = BigUint::from_str(&e.serialize()).unwrap();
-        let a = BigUint::from_str(&self.serialize()).unwrap();
-        let l = a.modpow(&e_bigint, &Self::prime());
-        if l == neg_one {
-            -1
-        } else if l == one {
-            return 1;
-        } else {
-            panic!("legendre symbol is not 1, -1, or 0");
-        }
-    }
-
-    /// [Kumar 08](https://arxiv.org/pdf/2008.11814v4) prime field square root implementation.
-    /// Always returns the smaller root e.g. the positive root.
-    fn sqrt(&self) -> Self {
-        if self == &Self::zero() {
-            return Self::zero();
-        }
-        if self.legendre() != 1 {
-            panic!("legendre symbol is not 1: root does not exist or input is 0");
-        }
-        // find a non-residue
-        let mut x = Self::one() + Self::one();
-        let non_residue;
-        loop {
-            if x.legendre() == -1 {
-                non_residue = x.clone();
-                break;
-            }
-            x += Self::one();
-        }
-        let b = BigUint::from_str(&non_residue.serialize()).unwrap();
-
-        let a = BigUint::from_str(&self.serialize()).unwrap();
-        let two = Self::one() + Self::one();
-        let m = (-Self::one()) / two.clone();
-        let mut apow = -Self::one();
-        let mut bpow = Self::zero();
-        while BigUint::from_str(&apow.serialize()).unwrap().is_even() {
-            apow = apow / two.clone();
-            bpow = bpow / two.clone();
-            let a_ = a.modpow(
-                &BigUint::from_str(&apow.serialize()).unwrap(),
-                &Self::prime(),
-            );
-            let b_ = b.modpow(
-                &BigUint::from_str(&bpow.serialize()).unwrap(),
-                &Self::prime(),
-            );
-            if (a_ * b_) % Self::prime() == Self::prime() - 1_u32 {
-                bpow += m.clone();
-            }
-        }
-        apow = (apow + Self::one()) / two.clone();
-        bpow = bpow / two;
-        let a_ = a.modpow(
-            &BigUint::from_str(&apow.serialize()).unwrap(),
-            &Self::prime(),
-        );
-        let b_ = b.modpow(
-            &BigUint::from_str(&bpow.serialize()).unwrap(),
-            &Self::prime(),
-        );
-        let root = (a_ * b_) % Self::prime();
-        let other_root = Self::prime() - root.clone();
-        if root > other_root {
-            Self::from_biguint(&other_root)
-        } else {
-            Self::from_biguint(&root)
-        }
-    }
 }
 
 #[cfg(test)]
@@ -309,6 +317,16 @@ mod tests {
     }
 
     custom_ring!(F13FieldElement, 13, "f13");
+
+    impl FieldElement for F13FieldElement {}
+
+    impl std::ops::Div for F13FieldElement {
+        type Output = Self;
+
+        fn div(self, other: Self) -> Self {
+            self * other.inv().unwrap()
+        }
+    }
 
     #[test]
     fn sqrt_custom_ring() {
