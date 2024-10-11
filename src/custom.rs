@@ -6,7 +6,7 @@
 ///
 /// This macro is intended for testing and educational purposes.
 #[macro_export]
-macro_rules! custom_ring {
+macro_rules! scalar_ring {
     ( $name: ident, $modulus: literal, $name_str: expr ) => {
         /// An element in a ring with a custom modulus
         /// this modulus must be < 2^64 so we can do modular
@@ -143,7 +143,7 @@ mod tests {
 
     // define a field element in f13 (finite field with 13 elements)
     // do some tests on it
-    custom_ring!(F13FieldElement, 13_u128, "f13");
+    scalar_ring!(F13FieldElement, 13_u128, "f13");
 
     #[test]
     fn str_name() {

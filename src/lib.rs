@@ -105,7 +105,7 @@ pub trait FieldElement:
     /// Sample a random element from the field using a supplied
     /// source of randomness. Requires the `random` feature to be enabled.
     #[cfg(feature = "random")]
-    fn sample_rand<R: rand::Rng>(src: &mut R) -> Self {
+    fn sample_uniform<R: rand::Rng>(src: &mut R) -> Self {
         let bytes = vec![0; Self::byte_len()]
             .iter()
             .map(|_| src.gen_range(0..=255))
@@ -308,10 +308,10 @@ mod tests {
         }
     }
 
-    custom_ring!(F13FieldElement, 13, "f13");
+    scalar_ring!(F13FieldElement, 13, "f13");
 
     #[test]
-    fn sqrt_custom_ring() {
+    fn sqrt_scalar_ring() {
         test_sqrt::<F13FieldElement>();
     }
 
