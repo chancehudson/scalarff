@@ -48,7 +48,7 @@ mod custom;
 pub mod alt_bn128;
 #[cfg(feature = "curve25519")]
 pub mod curve_25519;
-#[cfg(all(feature = "oxfoi", not(target_arch = "wasm32")))]
+#[cfg(all(feature = "oxfoi", target_pointer_width = "64"))]
 pub mod foi;
 #[cfg(feature = "oxfoi")]
 pub mod foi_slow;
@@ -60,7 +60,6 @@ pub mod timing;
 pub use alt_bn128::Bn128FieldElement;
 #[cfg(feature = "curve25519")]
 pub use curve_25519::Curve25519FieldElement;
-#[cfg(all(feature = "oxfoi", not(target_arch = "wasm32")))]
 #[cfg(all(feature = "oxfoi", target_pointer_width = "64"))]
 pub use foi::FoiFieldElement;
 #[cfg(all(feature = "oxfoi", not(target_pointer_width = "64")))]
