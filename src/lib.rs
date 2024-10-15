@@ -61,8 +61,9 @@ pub use alt_bn128::Bn128FieldElement;
 #[cfg(feature = "curve25519")]
 pub use curve_25519::Curve25519FieldElement;
 #[cfg(all(feature = "oxfoi", not(target_arch = "wasm32")))]
+#[cfg(all(feature = "oxfoi", target_pointer_width = "64"))]
 pub use foi::FoiFieldElement;
-#[cfg(all(feature = "oxfoi", target_arch = "wasm32"))]
+#[cfg(all(feature = "oxfoi", not(target_pointer_width = "64")))]
 pub use foi_slow::FoiFieldElement;
 pub use num_bigint::BigUint;
 
