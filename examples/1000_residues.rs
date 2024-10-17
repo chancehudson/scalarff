@@ -5,7 +5,7 @@ use scalarff::timing::summary_exec;
 use scalarff::Bn128FieldElement;
 use scalarff::Curve25519FieldElement;
 use scalarff::FieldElement;
-use scalarff::FoiFieldElement;
+use scalarff::OxfoiFieldElement;
 
 fn main() {
     // calculate the next {count} square roots in a field
@@ -24,7 +24,7 @@ fn main() {
         format!("{count} quadratic residues in {}", T::name_str())
     });
     stat_exec(&mut || {
-        type T = FoiFieldElement;
+        type T = OxfoiFieldElement;
         print_residues::<T>(start_at, count);
         format!("{count} quadratic residues in {}", T::name_str())
     });

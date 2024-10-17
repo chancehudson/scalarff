@@ -49,9 +49,9 @@ pub mod alt_bn128;
 #[cfg(feature = "curve25519")]
 pub mod curve_25519;
 #[cfg(all(feature = "oxfoi", target_pointer_width = "64"))]
-pub mod foi;
+pub mod oxfoi;
 #[cfg(feature = "oxfoi")]
-pub mod foi_slow;
+pub mod oxfoi_slow;
 
 pub mod matrix;
 pub mod timing;
@@ -60,11 +60,11 @@ pub mod timing;
 pub use alt_bn128::Bn128FieldElement;
 #[cfg(feature = "curve25519")]
 pub use curve_25519::Curve25519FieldElement;
-#[cfg(all(feature = "oxfoi", target_pointer_width = "64"))]
-pub use foi::FoiFieldElement;
-#[cfg(all(feature = "oxfoi", not(target_pointer_width = "64")))]
-pub use foi_slow::FoiFieldElement;
 pub use num_bigint::BigUint;
+#[cfg(all(feature = "oxfoi", target_pointer_width = "64"))]
+pub use oxfoi::OxfoiFieldElement;
+#[cfg(all(feature = "oxfoi", not(target_pointer_width = "64")))]
+pub use oxfoi_slow::OxfoiFieldElement;
 
 /// A generic representation of a scalar finite field element.
 /// For use in internal module logic. Supports field operations
@@ -317,13 +317,13 @@ mod tests {
 
     #[test]
     fn sqrt_foi_slow() {
-        test_sqrt::<foi_slow::FoiFieldElement>();
+        test_sqrt::<oxfoi_slow::OxfoiFieldElement>();
     }
 
     #[cfg(not(target_arch = "wasm32"))]
     #[test]
     fn sqrt_foi() {
-        test_sqrt::<foi::FoiFieldElement>();
+        test_sqrt::<oxfoi::OxfoiFieldElement>();
     }
 
     #[test]

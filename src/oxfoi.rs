@@ -16,9 +16,9 @@ use twenty_first::math::b_field_element::BFieldElement;
 use super::FieldElement;
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
-pub struct FoiFieldElement(BFieldElement);
+pub struct OxfoiFieldElement(BFieldElement);
 
-impl FieldElement for FoiFieldElement {
+impl FieldElement for OxfoiFieldElement {
     fn byte_len() -> usize {
         8
     }
@@ -58,80 +58,80 @@ impl FieldElement for FoiFieldElement {
     }
 }
 
-impl Display for FoiFieldElement {
+impl Display for OxfoiFieldElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
 
-impl FromStr for FoiFieldElement {
+impl FromStr for OxfoiFieldElement {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(FoiFieldElement(BFieldElement::from_str(s).unwrap()))
+        Ok(OxfoiFieldElement(BFieldElement::from_str(s).unwrap()))
     }
 }
 
-impl From<u64> for FoiFieldElement {
+impl From<u64> for OxfoiFieldElement {
     fn from(value: u64) -> Self {
-        FoiFieldElement(BFieldElement::from(value))
+        OxfoiFieldElement(BFieldElement::from(value))
     }
 }
 
-impl Add for FoiFieldElement {
+impl Add for OxfoiFieldElement {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        FoiFieldElement(self.0 + other.0)
+        OxfoiFieldElement(self.0 + other.0)
     }
 }
 
-impl Sub for FoiFieldElement {
+impl Sub for OxfoiFieldElement {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
-        FoiFieldElement(self.0 - other.0)
+        OxfoiFieldElement(self.0 - other.0)
     }
 }
 
-impl Mul for FoiFieldElement {
+impl Mul for OxfoiFieldElement {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
-        FoiFieldElement(self.0 * other.0)
+        OxfoiFieldElement(self.0 * other.0)
     }
 }
 
-impl Div for FoiFieldElement {
+impl Div for OxfoiFieldElement {
     type Output = Self;
 
     fn div(self, other: Self) -> Self {
-        FoiFieldElement(self.0 / other.0)
+        OxfoiFieldElement(self.0 / other.0)
     }
 }
 
-impl AddAssign for FoiFieldElement {
+impl AddAssign for OxfoiFieldElement {
     fn add_assign(&mut self, other: Self) {
         *self = *self + other;
     }
 }
 
-impl MulAssign for FoiFieldElement {
+impl MulAssign for OxfoiFieldElement {
     fn mul_assign(&mut self, other: Self) {
         *self = *self * other;
     }
 }
 
-impl SubAssign for FoiFieldElement {
+impl SubAssign for OxfoiFieldElement {
     fn sub_assign(&mut self, other: Self) {
         *self = *self - other;
     }
 }
 
-impl Neg for FoiFieldElement {
+impl Neg for OxfoiFieldElement {
     type Output = Self;
 
     fn neg(self) -> Self {
-        FoiFieldElement(-self.0)
+        OxfoiFieldElement(-self.0)
     }
 }
