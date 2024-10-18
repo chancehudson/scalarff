@@ -16,14 +16,14 @@
 //! Example usage:
 //! ```toml
 //! [dependencies]
-//! scalarff = { version = "0.4.1", features = ["curve25519", "oxfoi"] }
+//! scalarff = { version = "0.6.0", features = ["curve25519", "oxfoi"] }
 //! ```
 //!
 //! ```rust
 //! use scalarff::FieldElement; // Bring the trait in scope
 //! // Import 1 or more concrete instances
 //! use scalarff::Curve25519FieldElement;
-//! use scalarff::FoiFieldElement;
+//! use scalarff::OxfoiFieldElement;
 //! ```
 //!
 use std::fmt::Debug;
