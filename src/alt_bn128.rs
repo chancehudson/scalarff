@@ -22,6 +22,21 @@ use super::FieldElement;
 #[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Bn128FieldElement(Fr);
 
+#[cfg(feature = "serde")]
+impl serde::Serialize for Bn128FieldElement {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_bytes(&self.to_bytes_le())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'a> serde::Deserialize<'a> for Bn128FieldElement {
+    fn deserialize<S: serde::Deserializer<'a>>(serializer: S) -> Result<Self, S::Error> {
+        let bytes = <Vec<u8>>::deserialize(serializer)?;
+        Ok(Self::from_bytes_le(&bytes))
+    }
+}
+
 impl FieldElement for Bn128FieldElement {
     fn name_str() -> &'static str {
         "alt_bn128"
@@ -33,21 +48,6 @@ impl FieldElement for Bn128FieldElement {
 
     fn byte_len() -> usize {
         32
-    }
-
-    // why does arkworks serialize 0 to an empty string?
-    // why would you do that?
-    fn serialize(&self) -> String {
-        let s = self.0.clone().to_string();
-        if s.is_empty() {
-            "0".to_string()
-        } else {
-            s
-        }
-    }
-
-    fn deserialize(str: &str) -> Self {
-        Self(Fr::from_str(str).unwrap())
     }
 
     fn to_bytes_le(&self) -> Vec<u8> {
@@ -66,13 +66,18 @@ impl FieldElement for Bn128FieldElement {
 
 impl Debug for Bn128FieldElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.serialize())
+        write!(f, "{}", self.to_string())
     }
 }
 
 impl Display for Bn128FieldElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.serialize())
+        let s = self.0.clone().to_string();
+        if s.is_empty() {
+            write!(f, "0")
+        } else {
+            write!(f, "{}", s)
+        }
     }
 }
 

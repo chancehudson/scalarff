@@ -28,15 +28,15 @@ macro_rules! scalar_ring {
             }
 
             fn byte_len() -> usize {
-                8
-            }
+                // add 1 because ilog2 rounds down
+                // this causes a worst case of 1 extra byte
+                //
+                // number of bits in the modulus
+                let mod_bits = ($modulus as u128).ilog2() + 1;
 
-            fn serialize(&self) -> String {
-                self.0.to_string()
-            }
-
-            fn deserialize(str: &str) -> Self {
-                $name(str.parse::<u128>().unwrap())
+                // add 1 here as well because floored division rounds down
+                // this causes another worst case +1 byte
+                (usize::try_from(mod_bits).unwrap() / 8) + 1
             }
 
             fn to_bytes_le(&self) -> Vec<u8> {
@@ -49,6 +49,21 @@ macro_rules! scalar_ring {
                     padded_bytes.resize(16, 0);
                 }
                 $name(u128::from_le_bytes(padded_bytes.try_into().unwrap()) % $modulus)
+            }
+        }
+
+        #[cfg(feature = "serde")]
+        impl serde::Serialize for $name {
+            fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+                serializer.serialize_bytes(&self.to_bytes_le())
+            }
+        }
+
+        #[cfg(feature = "serde")]
+        impl<'a> serde::Deserialize<'a> for $name {
+            fn deserialize<S: serde::Deserializer<'a>>(serializer: S) -> Result<Self, S::Error> {
+                let bytes = <Vec<u8>>::deserialize(serializer)?;
+                Ok(Self::from_bytes_le(&bytes))
             }
         }
 
