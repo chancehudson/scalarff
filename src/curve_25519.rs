@@ -20,17 +20,24 @@ use super::FieldElement;
 #[derive(Clone, Copy, Eq, Hash, PartialEq)]
 pub struct Curve25519FieldElement(Scalar);
 
+#[cfg(feature = "serde")]
+impl serde::Serialize for Curve25519FieldElement {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_bytes(&self.to_bytes_le())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'a> serde::Deserialize<'a> for Curve25519FieldElement {
+    fn deserialize<S: serde::Deserializer<'a>>(serializer: S) -> Result<Self, S::Error> {
+        let bytes = <Vec<u8>>::deserialize(serializer)?;
+        Ok(Self::from_bytes_le(&bytes))
+    }
+}
+
 impl FieldElement for Curve25519FieldElement {
     fn name_str() -> &'static str {
         "curve25519"
-    }
-
-    fn serialize(&self) -> String {
-        self.clone().to_string()
-    }
-
-    fn deserialize(str: &str) -> Self {
-        Self::from_str(str).unwrap()
     }
 
     fn byte_len() -> usize {

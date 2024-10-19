@@ -15,6 +15,7 @@ use twenty_first::math::b_field_element::BFieldElement;
 
 use super::FieldElement;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub struct OxfoiFieldElement(BFieldElement);
 
@@ -29,14 +30,6 @@ impl FieldElement for OxfoiFieldElement {
 
     fn prime() -> num_bigint::BigUint {
         num_bigint::BigUint::from(BFieldElement::P)
-    }
-
-    fn serialize(&self) -> String {
-        self.0.value().to_string()
-    }
-
-    fn deserialize(str: &str) -> Self {
-        Self(BFieldElement::from_str(str).unwrap())
     }
 
     fn to_bytes_le(&self) -> Vec<u8> {
@@ -60,15 +53,15 @@ impl FieldElement for OxfoiFieldElement {
 
 impl Display for OxfoiFieldElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "{}", self.0.value())
     }
 }
 
 impl FromStr for OxfoiFieldElement {
-    type Err = ();
+    type Err = <BFieldElement as FromStr>::Err;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(OxfoiFieldElement(BFieldElement::from_str(s).unwrap()))
+        Ok(OxfoiFieldElement(BFieldElement::from_str(s)?))
     }
 }
 

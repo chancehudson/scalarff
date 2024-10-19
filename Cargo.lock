@@ -827,6 +827,7 @@ dependencies = [
  "num-bigint",
  "num-integer",
  "rand",
+ "serde",
  "twenty-first",
 ]
 

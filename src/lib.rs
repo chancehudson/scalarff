@@ -113,14 +113,6 @@ pub trait FieldElement:
         Self::from_bytes_le(&bytes)
     }
 
-    /// Get a valid string representation
-    /// of the element.
-    fn serialize(&self) -> String;
-
-    /// Parse an element from a supposedly
-    /// valid string representation.
-    fn deserialize(str: &str) -> Self;
-
     /// The prime modulus of the field as an
     /// arbitrary precision integer.
     fn prime() -> BigUint {
@@ -147,7 +139,7 @@ pub trait FieldElement:
     /// precision operations.
     fn to_biguint(&self) -> num_bigint::BigUint {
         // todo: use bytes
-        // BigUint::from_str(&self.serialize()).unwrap()
+        // BigUint::from_str(&self.to_string()).unwrap()
         BigUint::from_bytes_le(self.to_bytes_le().as_slice())
     }
 
@@ -177,7 +169,7 @@ pub trait FieldElement:
         // careful here, if POW is >= 64 we will overflow
         // the u64 below
         let two_pow = BigUint::from(/*here ->*/ 2_u64.pow(POW));
-        let plain_str = self.serialize();
+        let plain_str = self.to_string();
         let l60_str = format!("{}_L60", self.to_biguint() % two_pow);
         // add a couple characters so we always print
         // 0xfoi elements as decimal strings
@@ -221,8 +213,8 @@ pub trait FieldElement:
         let neg_one = Self::prime() - 1_u32;
         let one = BigUint::from(1_u32);
         let e = (-Self::one()) / (Self::one() + Self::one());
-        let e_bigint = BigUint::from_str(&e.serialize()).unwrap();
-        let a = BigUint::from_str(&self.serialize()).unwrap();
+        let e_bigint = BigUint::from_str(&e.to_string()).unwrap();
+        let a = BigUint::from_str(&self.to_string()).unwrap();
         let l = a.modpow(&e_bigint, &Self::prime());
         if l == neg_one {
             -1
@@ -252,22 +244,22 @@ pub trait FieldElement:
             }
             x += Self::one();
         }
-        let b = BigUint::from_str(&non_residue.serialize()).unwrap();
+        let b = BigUint::from_str(&non_residue.to_string()).unwrap();
 
-        let a = BigUint::from_str(&self.serialize()).unwrap();
+        let a = BigUint::from_str(&self.to_string()).unwrap();
         let two = Self::one() + Self::one();
         let m = (-Self::one()) / two.clone();
         let mut apow = -Self::one();
         let mut bpow = Self::zero();
-        while BigUint::from_str(&apow.serialize()).unwrap().is_even() {
+        while BigUint::from_str(&apow.to_string()).unwrap().is_even() {
             apow = apow / two.clone();
             bpow = bpow / two.clone();
             let a_ = a.modpow(
-                &BigUint::from_str(&apow.serialize()).unwrap(),
+                &BigUint::from_str(&apow.to_string()).unwrap(),
                 &Self::prime(),
             );
             let b_ = b.modpow(
-                &BigUint::from_str(&bpow.serialize()).unwrap(),
+                &BigUint::from_str(&bpow.to_string()).unwrap(),
                 &Self::prime(),
             );
             if (a_ * b_) % Self::prime() == Self::prime() - 1_u32 {
@@ -277,11 +269,11 @@ pub trait FieldElement:
         apow = (apow + Self::one()) / two.clone();
         bpow = bpow / two;
         let a_ = a.modpow(
-            &BigUint::from_str(&apow.serialize()).unwrap(),
+            &BigUint::from_str(&apow.to_string()).unwrap(),
             &Self::prime(),
         );
         let b_ = b.modpow(
-            &BigUint::from_str(&bpow.serialize()).unwrap(),
+            &BigUint::from_str(&bpow.to_string()).unwrap(),
             &Self::prime(),
         );
         let root = (a_ * b_) % Self::prime();
