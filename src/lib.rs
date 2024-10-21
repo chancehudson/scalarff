@@ -49,7 +49,7 @@ pub mod alt_bn128;
 #[cfg(feature = "curve25519")]
 pub mod curve_25519;
 #[cfg(feature = "oxfoi")]
-pub mod oxfoi_slow;
+pub mod oxfoi;
 
 pub mod matrix;
 pub mod timing;
@@ -60,7 +60,7 @@ pub use alt_bn128::Bn128FieldElement;
 pub use curve_25519::Curve25519FieldElement;
 pub use num_bigint::BigUint;
 #[cfg(all(feature = "oxfoi"))]
-pub use oxfoi_slow::OxfoiFieldElement;
+pub use oxfoi::OxfoiFieldElement;
 
 /// A generic representation of a scalar finite field element.
 /// For use in internal module logic. Supports field operations
@@ -304,8 +304,8 @@ mod tests {
     }
 
     #[test]
-    fn sqrt_foi_slow() {
-        test_sqrt::<oxfoi_slow::OxfoiFieldElement>();
+    fn sqrt_oxfoi() {
+        test_sqrt::<oxfoi::OxfoiFieldElement>();
     }
 
     #[test]
