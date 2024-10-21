@@ -443,7 +443,7 @@ dependencies = [
 
 [[package]]
 name = "scalarff"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "ark-bn254",
  "ark-ff",
