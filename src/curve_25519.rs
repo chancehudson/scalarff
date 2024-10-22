@@ -77,7 +77,7 @@ impl Display for Curve25519FieldElement {
 }
 
 impl FromStr for Curve25519FieldElement {
-    type Err = ();
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // The curve25519_dalek implementation of from_str_vartime
@@ -88,7 +88,8 @@ impl FromStr for Curve25519FieldElement {
             Ok(Self::zero())
         } else {
             Ok(Curve25519FieldElement(
-                Scalar::from_str_vartime(trimmed).unwrap(),
+                Scalar::from_str_vartime(trimmed)
+                    .ok_or_else(|| anyhow::anyhow!("Invalid curve25519 field element: {}", s))?,
             ))
         }
     }

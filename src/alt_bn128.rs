@@ -82,7 +82,7 @@ impl Display for Bn128FieldElement {
 }
 
 impl FromStr for Bn128FieldElement {
-    type Err = ();
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(Bn128FieldElement(Fr::from_str(s).unwrap()))

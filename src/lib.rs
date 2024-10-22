@@ -16,7 +16,7 @@
 //! Example usage:
 //! ```toml
 //! [dependencies]
-//! scalarff = { version = "0.6.0", features = ["curve25519", "oxfoi"] }
+//! scalarff = { version = "0.7.0", features = ["curve25519", "oxfoi"] }
 //! ```
 //!
 //! ```rust
@@ -76,7 +76,7 @@ pub trait FieldElement:
     + Neg<Output = Self>
     + Sub<Output = Self>
     + SubAssign
-    + FromStr
+    + FromStr<Err = anyhow::Error>
     + PartialEq
     + Clone
     + Hash

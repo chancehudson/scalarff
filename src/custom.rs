@@ -74,10 +74,10 @@ macro_rules! scalar_ring {
         }
 
         impl std::str::FromStr for $name {
-            type Err = ();
+            type Err = anyhow::Error;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                Ok($name(s.parse::<u128>().unwrap() % $modulus))
+                Ok($name(s.parse::<u128>()? % $modulus))
             }
         }
 

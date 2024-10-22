@@ -15,6 +15,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.90"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "37bf3594c4c988a53154954629820791dde498571819ae4ca50ca811e060cc95"
+
+[[package]]
 name = "ark-bn254"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -443,8 +449,9 @@ dependencies = [
 
 [[package]]
 name = "scalarff"
-version = "0.7.1"
+version = "0.8.0"
 dependencies = [
+ "anyhow",
  "ark-bn254",
  "ark-ff",
  "ark-std",
