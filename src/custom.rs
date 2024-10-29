@@ -40,7 +40,14 @@ macro_rules! scalar_ring {
             }
 
             fn to_bytes_le(&self) -> Vec<u8> {
-                self.0.to_le_bytes().to_vec()
+                #[cfg(debug_assertions)]
+                {
+                    let bytes = self.0.to_le_bytes();
+                    for i in bytes.iter().skip(Self::byte_len()) {
+                        assert_eq!(*i, 0, "Scalar value is too large for modulus");
+                    }
+                }
+                self.0.to_le_bytes()[0..Self::byte_len()].to_vec()
             }
 
             fn from_bytes_le(bytes: &[u8]) -> Self {
@@ -159,6 +166,7 @@ mod tests {
     // define a field element in f13 (finite field with 13 elements)
     // do some tests on it
     scalar_ring!(F13FieldElement, 13_u128, "f13");
+    scalar_ring!(BabyBearElement, 2013265921_u128, "babybear");
 
     #[test]
     fn str_name() {
@@ -174,5 +182,15 @@ mod tests {
             assert_eq!(x_e * x_e, F13FieldElement((x * x) % 13));
             assert_eq!(x_e + x_e, F13FieldElement((x + x) % 13));
         }
+    }
+
+    #[test]
+    fn serialization() {
+        assert_eq!(BabyBearElement::byte_len(), 4);
+        let x = -BabyBearElement::one();
+        let bytes = x.to_bytes_le();
+        assert_eq!(bytes.len(), BabyBearElement::byte_len());
+        let y = BabyBearElement::from_bytes_le(&bytes);
+        assert_eq!(x, y);
     }
 }
