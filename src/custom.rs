@@ -192,5 +192,22 @@ mod tests {
         assert_eq!(bytes.len(), BabyBearElement::byte_len());
         let y = BabyBearElement::from_bytes_le(&bytes);
         assert_eq!(x, y);
+        // test the zero element
+        assert_eq!(
+            BabyBearElement::zero().to_bytes_le().len(),
+            BabyBearElement::byte_len()
+        );
+        for v in BabyBearElement::zero().to_bytes_le() {
+            assert_eq!(v, 0);
+        }
+        // test some random elements
+        #[cfg(feature = "random")]
+        for _ in 0..1000 {
+            let x = BabyBearElement::sample_uniform(&mut rand::thread_rng());
+            let bytes = x.to_bytes_le();
+            assert_eq!(bytes.len(), BabyBearElement::byte_len());
+            let y = BabyBearElement::from_bytes_le(&bytes);
+            assert_eq!(x, y);
+        }
     }
 }

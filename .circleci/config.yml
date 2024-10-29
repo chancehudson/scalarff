@@ -65,7 +65,7 @@ jobs:
       - run: *rust_version
       - run:
           name: Test
-          command: cargo test --release --features=oxfoi,curve25519,alt_bn128
+          command: cargo test --release --features=oxfoi,curve25519,alt_bn128,random
       - run:
           name: Build wasm32
           command: cargo build --target=wasm32-unknown-unknown --features=oxfoi,curve25519,alt_bn128
